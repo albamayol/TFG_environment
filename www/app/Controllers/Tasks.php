@@ -15,10 +15,30 @@ class Tasks extends BaseController
 
     public function myDay()
     {
-        $data['tasks'] = $this->taskModel
-            ->where('limit_date >=', date('Y-m-d 00:00:00'))
-            ->where('limit_date <=', date('Y-m-d 23:59:59'))
-            ->findAll();
+        //$data['tasks'] = $this->taskModel
+        $userId = session()->get('id_user');
+        $tasks = $this->taskModel
+        ->select('Task.*')
+        ->join('tasks_users', 'Task.id_task = tasks_users.id_task')
+        ->where('tasks_users.id_user', $userId)
+        ->where('limit_date >=', date('Y-m-d 00:00:00'))
+        ->where('limit_date <=', date('Y-m-d 23:59:59'))
+        ->findAll();
+
+        $total = count($tasks);
+        $completed = 0;
+        foreach ($tasks as $t) {
+            if ($t['state'] === 'Done') {
+                $completed++;
+            }
+        }
+
+        $data = [
+            'tasks'   => $tasks,
+            'today'   => date('Y-m-d'),
+            'percent' => $total > 0 ? round(($completed / $total) * 100) : 0,
+        ];
+
         return view('tasks/my_day', $data);
     }
 

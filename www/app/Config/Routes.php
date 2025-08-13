@@ -9,6 +9,8 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'Auth::login');
 $routes->post('login', 'Auth::attempt');
 $routes->get('logout', 'Auth::logout');
+$routes->get('signup', 'Auth::signup');
+$routes->post('signup', 'Auth::register');
 
 $routes->group('Tasks', ['filter' => 'auth'], function($routes) {
     $routes->get('MyDay', 'Tasks::myDay');

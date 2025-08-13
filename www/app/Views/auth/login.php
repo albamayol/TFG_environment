@@ -15,4 +15,5 @@
 
     <button type="submit">Entrar</button>
 </form>
+<p><a href="/signup">Crear cuenta</a></p>
 <?= $this->endSection() ?>

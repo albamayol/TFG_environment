@@ -50,7 +50,7 @@ class Auth extends BaseController
     public function attempt()
     {
         $userModel = new UserModel();
-        $user = $userModel->where('email', $this->request->getPost('email'))->first();
+        $user = $userModel->findByEmail($this->request->getPost('email'));
 
         if (!$user || !password_verify($this->request->getPost('password'), $user['password'])) {
             return redirect()->back()->with('error', 'Credenciales inválidas.');
@@ -58,7 +58,7 @@ class Auth extends BaseController
 
         session()->set([
             'id_user'   => $user['id_user'],
-            'role_name' => $this->getRoleName($user['id_user']), // función auxiliar
+            'role_name' => $userModel->getRoleName($user['id_user']) ?? 'Worker', // función auxiliar
             'logged_in' => true
         ]);
 
@@ -73,6 +73,7 @@ class Auth extends BaseController
 
     private function getRoleName($userId)
     {
+        //TODO QUE SEA UNA SOLA CONSULTA, QUE NO SE HAGAN 4 NEWS
         // Consulta a la tabla Profile_Admin, Manager, etc. para determinar el rol.
         // Devuelve 'Profile_Admin', 'Manager', 'Head_of_Team' o 'Worker'.
         $profileAdmin = new ProfileAdminModel();
@@ -85,11 +86,14 @@ class Auth extends BaseController
             return 'Manager';
         }
 
-        $head = new HeadOfTeamModel();
-        if ($head->isHeadOfTeam($userId)) {
+        $headOfTeam = new HeadOfTeamModel();
+        if ($headOfTeam->isHeadOfTeam($userId)) {
             return 'Head_of_Team';
         }
 
-        return 'Worker';
+        $worker = new WorkerModel();
+        if ($worker->isWorker($userId)) {   
+            return 'Worker';
+        }
     }
 }
