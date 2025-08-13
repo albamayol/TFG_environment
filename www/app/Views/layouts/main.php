@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title><?= esc($title ?? 'Gestor') ?></title>
+    <title><?= esc($title ?? 'Pasmo') ?></title>
     <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>

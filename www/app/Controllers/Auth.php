@@ -2,7 +2,11 @@
 
 namespace App\Controllers;
 
+use App\Models\HeadOfTeamModel;
+use App\Models\ManagerModel;
+use App\Models\ProfileAdminModel;
 use App\Models\UserModel;
+use App\Models\WorkerModel;
 
 class Auth extends BaseController
 {
@@ -13,6 +17,35 @@ class Auth extends BaseController
         }
         return view('auth/login');
     }
+
+    public function signup()
+    {
+        return view('auth/signup');
+    }
+
+    public function register()
+    {
+        $userModel = new UserModel();
+
+        if (! $this->validate([
+            'name'     => 'required',
+            'surnames' => 'required',
+            'email'    => 'required|valid_email|is_unique[User.email]',
+            'password' => 'required|min_length[8]'
+        ])) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $userModel->save([
+            'name'     => $this->request->getPost('name'),
+            'surnames' => $this->request->getPost('surnames'),
+            'email'    => $this->request->getPost('email'),
+            'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT)
+        ]);
+
+        return redirect()->to('/')->with('message', 'Usuario registrado');
+    }
+
 
     public function attempt()
     {
@@ -42,5 +75,21 @@ class Auth extends BaseController
     {
         // Consulta a la tabla Profile_Admin, Manager, etc. para determinar el rol.
         // Devuelve 'Profile_Admin', 'Manager', 'Head_of_Team' o 'Worker'.
+        $profileAdmin = new ProfileAdminModel();
+        if ($profileAdmin->isAdmin($userId)) {
+            return 'Profile_Admin';
+        }
+
+        $manager = new ManagerModel();
+        if ($manager->isManager($userId)) {
+            return 'Manager';
+        }
+
+        $head = new HeadOfTeamModel();
+        if ($head->isHeadOfTeam($userId)) {
+            return 'Head_of_Team';
+        }
+
+        return 'Worker';
     }
 }
