@@ -29,6 +29,7 @@ class Auth extends BaseController {
     public function register() { //TODO: IF USER REGISTERS IT WILL BE BY DEFAULT GET MANAGER ROLE. Otherwise, it will be the profile admin that will be creating the profile for the users within their organization
         helper(['form']);
         $userModel = new UserModel();
+        $managerModel = new ManagerModel(); //Default role for new users
 
         // 1) normaliza ANTES de armar $data
         $rawTel = $this->request->getPost('telephone');
@@ -55,6 +56,12 @@ class Auth extends BaseController {
         
         // insert will run the model’s validationRules and validationMessages
         if ($userModel->insert($data)) {
+            
+            // Grab the auto‑generated id_user
+            $newUserId = $userModel->insertID();
+            // By default, assign the Manager role
+            $managerModel->insert(['id_manager' => $newUserId]);
+
             // success: redirect to login with flash message
             return redirect()->to('/')->with('message', 'Usuario registrado correctamente');
         } else { // failure: redirect back with the errors array from the model

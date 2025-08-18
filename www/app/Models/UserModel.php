@@ -39,10 +39,10 @@ class UserModel extends Model {
 
     protected $validationRules = [
         'email'    => 'required|valid_email|is_unique[Usuario.email,id_user,{id_user}]',
-        'password' => 'label' => 'Password',
-                      'rules' => 'required|min_length[12]'
-                    . "|regex_match[/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])\S{12,}$/]"
-                    . "|not_contains_user_fields[email,name,surnames,dni_nie,telephone]", //TODO CHECK MIN LENGTH AND OTHER VALIDATION RULES
+        'password' => [
+            'label' => 'Password',
+            'rules' => 'required|min_length[12]|regex_match[/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9])\\S{12,}$/]|not_contains_user_fields[email,name,surnames,dni_nie,telephone]',
+        ],
         'name'     => 'required|min_length[3]',
         'surnames' => 'required|min_length[3]',
         'birthdate' => 'required|valid_date[Y-m-d]', // DD-MM-YYYY format
@@ -61,9 +61,9 @@ class UserModel extends Model {
         ],
         'password' => [
             'required'   => 'The Password field is required.',
-            'min_length' => 'The Password must be at least 8 characters long.',
-            'regex_match' => 'Debe incluir minúscula, mayúscula, número y símbolo, y no contener espacios.',
-        'not_contains_user_fields' => 'No puede contener tu email, nombre, apellidos, DNI/NIE ni teléfono.',
+            'min_length' => 'The Password must be at least 12 characters long.',
+            'regex_match' => 'The password format is not valid.',
+            'not_contains_user_fields' => 'The password can not contain email, name, surnames, DNI/NIE or telephone.',
         ],
         'repeated_password' => [
             'required' => 'The Repeated Password field is required.',
