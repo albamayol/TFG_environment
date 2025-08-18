@@ -4,24 +4,20 @@ namespace App\Controllers;
 
 use App\Models\UserModel;
 
-class Profile extends BaseController
-{
+class Profile extends BaseController {
     protected $userModel;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->userModel = new UserModel();
     }
 
-    public function index()
-    {
+    public function index() {
         $userId = session()->get('id_user');
         $user   = $this->userModel->find($userId);
         return view('profile/index', ['user' => $user]);
     }
 
-    public function update()
-    {
+    public function update() {
         $userId = session()->get('id_user');
 
         if (! $this->validate([

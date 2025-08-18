@@ -4,23 +4,19 @@ namespace App\Controllers;
 
 use App\Models\ProjectModel;
 
-class Projects extends BaseController
-{
+class Projects extends BaseController {
     protected $projectModel;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->projectModel = new ProjectModel();
     }
 
-    public function index()
-    {
+    public function index() {
         $data['projects'] = $this->projectModel->findAll();
         return view('projects/my_projects', $data);
     }
 
-    public function show($id)
-    {
+    public function show($id) {
         $project = $this->projectModel->find($id);
         if (! $project) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
@@ -28,13 +24,11 @@ class Projects extends BaseController
         return view('projects/show', ['project' => $project]);
     }
 
-    public function create()
-    {
+    public function create() {
         return view('projects/create');
     }
 
-    public function store()
-    {
+    public function store() {
         if (! $this->validate([
             'name' => 'required|min_length[3]'
         ])) {

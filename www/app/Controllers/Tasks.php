@@ -4,17 +4,14 @@ namespace App\Controllers;
 
 use App\Models\TaskModel;
 
-class Tasks extends BaseController
-{
+class Tasks extends BaseController {
     protected $taskModel;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->taskModel = new TaskModel();
     }
 
-    public function myDay()
-    {
+    public function myDay() {
         //$data['tasks'] = $this->taskModel
         $userId = session()->get('id_user');
         $tasks = $this->taskModel
@@ -42,8 +39,7 @@ class Tasks extends BaseController
         return view('tasks/my_day', $data);
     }
 
-    public function myTasks()
-    {
+    public function myTasks() {
         $userId = session()->get('id_user');
         $data['tasks'] = $this->taskModel
             ->select('Task.*')
@@ -53,8 +49,7 @@ class Tasks extends BaseController
         return view('tasks/my_tasks', $data);
     }
 
-    public function show($id)
-    {
+    public function show($id) {
         $task = $this->taskModel->find($id);
         if (!$task) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
@@ -62,13 +57,11 @@ class Tasks extends BaseController
         return view('tasks/show', ['task' => $task]);
     }
 
-    public function create()
-    {
+    public function create() {
         return view('tasks/create');
     }
 
-    public function store()
-    {
+    public function store() {
         if (!$this->validate([
             'name' => 'required|min_length[3]'
         ])) {

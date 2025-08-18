@@ -3,8 +3,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class TaskModel extends Model
-{
+class TaskModel extends Model {
     protected $table      = 'Task';
     protected $primaryKey = 'id_task';
 
@@ -15,20 +14,16 @@ class TaskModel extends Model
 
     protected $useTimestamps = false;
 
-
-    public function findByProject(int $projectId)
-    {
+    public function findByProject(int $projectId) {
         return $this->where('id_project', $projectId)->findAll();
     }
 
-    public function assignUser(int $taskId, int $userId, string $role)
-    {
+    public function assignUser(int $taskId, int $userId, string $role) {
         $tasksUsers = new TasksUsersModel();
         return $tasksUsers->assignUserToTask($userId, $taskId, $role);
     }
 
-    public function overdue()
-    {
+    public function overdue() {
         return $this->where('limit_date <', date('Y-m-d H:i:s'))
                     ->where('state !=', 'Done')
                     ->findAll();

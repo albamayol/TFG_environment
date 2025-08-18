@@ -5,28 +5,23 @@ namespace App\Controllers\IAM;
 use App\Controllers\BaseController;
 use App\Models\UserModel;
 
-class Users extends BaseController
-{
+class Users extends BaseController {
     protected $userModel;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->userModel = new UserModel();
     }
 
-    public function index()
-    {
+    public function index() {
         $data['users'] = $this->userModel->findAll();
         return view('iam/users/index', $data);
     }
 
-    public function create()
-    {
+    public function create() {
         return view('iam/users/create');
     }
 
-    public function store()
-    {
+    public function store() {
         if (! $this->validate([
             'name'     => 'required',
             'surnames' => 'required',

@@ -3,8 +3,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class ProjectModel extends Model
-{
+class ProjectModel extends Model {
     protected $table      = 'Project';
     protected $primaryKey = 'id_project';
 
@@ -13,35 +12,28 @@ class ProjectModel extends Model
         'end_date', 'simulated'
     ];
 
-    // --- Funciones ---
-    public function getActive()
-    {
+    public function getActive() {
         return $this->where('state', 'Active')->findAll();
     }
 
-    public function addUserRole(int $projectId, int $userId, int $roleId)
-    {
+    public function addUserRole(int $projectId, int $userId, int $roleId) {
         $uprModel = new UserProjectRoleModel();
         return $uprModel->assignRole($userId, $roleId, $projectId);
     }
-    public function getProjectById(int $projectId)
-    {
+    public function getProjectById(int $projectId) {
         return $this->find($projectId);
     }
-    public function removeUserRole(int $projectId, int $userId)
-    {
+    public function removeUserRole(int $projectId, int $userId) {
         $uprModel = new UserProjectRoleModel();
         return $uprModel->removeRole($userId, $projectId);
     }
 
-    public function isUserInProject(int $userId, int $projectId): bool
-    {
+    public function isUserInProject(int $userId, int $projectId): bool {
         $uprModel = new UserProjectRoleModel();
         return $uprModel->isUserInProject($userId, $projectId);
     }
 
-    public function getProjectUsers(int $projectId)
-    {
+    public function getProjectUsers(int $projectId) {
         $uprModel = new UserProjectRoleModel();
         return $uprModel->getUsersByProject($projectId);
     }

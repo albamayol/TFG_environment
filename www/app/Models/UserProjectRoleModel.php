@@ -3,14 +3,12 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class UserProjectRoleModel extends Model
-{
+class UserProjectRoleModel extends Model {
     protected $table      = 'user_project_role';
     protected $primaryKey = false; // clave compuesta
     protected $allowedFields = ['id_user', 'id_role', 'id_project'];
 
-    public function assignRole(int $userId, int $roleId, int $projectId)
-    {
+    public function assignRole(int $userId, int $roleId, int $projectId) {
         return $this->insert([
             'id_user'    => $userId,
             'id_role'    => $roleId,
@@ -18,8 +16,7 @@ class UserProjectRoleModel extends Model
         ]);
     }
 
-    public function removeRole(int $userId, int $roleId, int $projectId)
-    {
+    public function removeRole(int $userId, int $roleId, int $projectId) {
         return $this->where([
             'id_user'    => $userId,
             'id_role'    => $roleId,
@@ -27,26 +24,25 @@ class UserProjectRoleModel extends Model
         ])->delete();
     }
 
-    public function getRolesByUser(int $userId)
-    {
-        return $this->where('id_user', $userId)->findAll();
+    public function getRolesOfProjectByUser(int $userId, int $projectId) {
+        return $this->where([
+            'id_user'    => $userId,
+            'id_project' => $projectId,
+        ])->findAll();
     }
 
-    public function isUserInProject(int $userId, int $projectId): bool
-    {
+    public function isUserInProject(int $userId, int $projectId): bool {
         return $this->where([
             'id_user'    => $userId,
             'id_project' => $projectId,
         ])->countAllResults() > 0;
     }
 
-    public function getUsersByProject(int $projectId)
-    {
+    public function getUsersByProject(int $projectId) {
         return $this->where('id_project', $projectId)->findAll();
     }
     
-    public function assignRole()
-    {
+    public function assignRole() {
         $uprModel = new UserProjectRoleModel();
         $uprModel->save([
             'id_user'    => $this->request->getPost('id_user'),

@@ -5,28 +5,23 @@ namespace App\Controllers\IAM;
 use App\Controllers\BaseController;
 use App\Models\ActionModel;
 
-class Actions extends BaseController
-{
+class Actions extends BaseController {
     protected $actionModel;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->actionModel = new ActionModel();
     }
 
-    public function index()
-    {
+    public function index() {
         $data['actions'] = $this->actionModel->findAll();
         return view('iam/actions/index', $data);
     }
 
-    public function create()
-    {
+    public function create() {
         return view('iam/actions/create');
     }
 
-    public function store()
-    {
+    public function store() {
         if (! $this->validate([
             'name' => 'required|min_length[3]'
         ])) {
