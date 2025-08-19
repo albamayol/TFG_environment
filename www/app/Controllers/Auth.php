@@ -26,12 +26,12 @@ class Auth extends BaseController {
     }
 
     //REGISTER FUNCTIONALITY WILL ALLOW TO HAVE AN ACCOUNT FOR THE APP TO BE USED FOR PERSONAL MOTIVES.
-    public function register() { //TODO: IF USER REGISTERS IT WILL BE BY DEFAULT GET MANAGER ROLE. Otherwise, it will be the profile admin that will be creating the profile for the users within their organization
+    public function register() {
         helper(['form']);
         $userModel = new UserModel();
         $managerModel = new ManagerModel(); //Default role for new users
 
-        // 1) normaliza ANTES de armar $data
+        //normalize BEFORE setting up $data
         $rawTel = $this->request->getPost('telephone');
         $tel = $this->normalize_phone_to_e164($rawTel, 'ES');
         if ($tel === null) {
@@ -59,7 +59,6 @@ class Auth extends BaseController {
             
             // Grab the auto‑generated id_user
             $newUserId = $userModel->insertID();
-            // By default, assign the Manager role
             $managerModel->insert(['id_manager' => $newUserId]);
 
             // success: redirect to login with flash message
@@ -69,31 +68,30 @@ class Auth extends BaseController {
         }
     }
 
-    public function success()
-    {
-        return 'User registered successfully!';
-    }
-
     public function attempt() {
-        echo "Attempting login..."; // Debugging line, can be removed later
         // Detect AJAX/JSON
         $isAjax = $this->request->isAJAX()
                   || stripos($this->request->getHeaderLine('Content-Type'), 'application/json') !== false;
 
         // Accept either form-encoded (non-AJAX) or JSON (AJAX)
-        $email = (string) ($this->request->getPost('email') ?? ($this->request->getJSON(true)['email'] ?? ''));
+        $email = trim((string) ($this->request->getPost('email') ?? ($this->request->getJSON(true)['email'] ?? '')));
         $pass  = (string) ($this->request->getPost('password') ?? ($this->request->getJSON(true)['password'] ?? ''));
-        echo "Email: $email, Password: $pass"; // Debugging line, can be removed later
+
         // First Basic validation
         if ($email === '' || $pass === '') {
             return $isAjax
                 ? $this->jsonLoginError('Email y contraseña son obligatorios')
                 : redirect()->back()->with('error', 'Email y contraseña son obligatorios');
         }
-        echo "Validación básica OK"; // Debugging line, can be removed later
 
         $userModel = new UserModel();
         $user = $userModel->findByEmail($email);
+
+        if (!$user || empty($user['password'])) {
+            return $isAjax
+            ? $this->jsonLoginError('Credenciales inválidas')
+            : redirect()->back()->with('error', 'Credenciales inválidas');
+        }
 
         if (!$user || !password_verify($pass, $user['password'])) {
             return $isAjax
@@ -101,21 +99,8 @@ class Auth extends BaseController {
                 : redirect()->back()->with('error', 'Credenciales inválidas');
         }
 
-        // Check if the user is already logged in -->already done in filter 'before'
-        /*if (session()->get('id_user')) {
-            return redirect()->to('/Tasks/MyDay');
-        }*/
-
-        // (Optional) rehash if needed
-        /*if (password_needs_rehash($user['password'], PASSWORD_DEFAULT)) {
-            model(UserModel::class)->update($user['id_user'], [
-                'password' => password_hash($pass, PASSWORD_DEFAULT)
-            ]);
-        }*/
-
         // Get the user's role
         $role = $userModel->getRole($user['id_user']);
-        echo "Role: $role"; // Debugging line, can be removed later
         $user['role_name'] = $role;
 
         // Store minimal session (keep your existing key names to avoid breaking nav)
@@ -129,15 +114,10 @@ class Auth extends BaseController {
         $session->regenerate(true);
 
         if ($isAjax) {
-            // Optionally return a fresh CSRF for next requests
-            $csrf = [
-                'name' => csrf_token(),
-                'hash' => csrf_hash(),
-            ];
             return $this->response->setJSON([
                 'success'  => true,
                 'redirect' => '/Tasks/MyDay',
-                'csrf'     => $csrf,
+                'csrf'     => ['name' => csrf_token(), 'hash' => csrf_hash()],
             ]);
         }
 

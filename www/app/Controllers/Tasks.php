@@ -36,7 +36,7 @@ class Tasks extends BaseController {
             'percent' => $total > 0 ? round(($completed / $total) * 100) : 0,
         ];
 
-        return view('tasks/my_day', $data);
+        return view('tasks/myDay', $data);
     }
 
     public function myTasks() {

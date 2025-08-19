@@ -13,11 +13,11 @@ $routes->get('/signup', 'Auth::signup');
 $routes->post('/signup', 'Auth::register');
 
 $routes->group('/Tasks', ['filter' => 'auth'], function($routes) {
-    $routes->get('/MyDay', 'Tasks::myDay');
-    $routes->get('/MyTasks', 'Tasks::myTasks');
-    $routes->get('/createTask', 'Tasks::create');
-    $routes->post('/store', 'Tasks::store');
-    $routes->get('/(:num)', 'Tasks::show/$1');
+    $routes->get('MyDay', 'Tasks::myDay');
+    $routes->get('MyTasks', 'Tasks::myTasks');
+    $routes->get('createTask', 'Tasks::create');
+    $routes->post('store', 'Tasks::store');
+    $routes->get('(:num)', 'Tasks::show/$1');
 });
 
 $routes->group('/Projects', ['filter' => 'auth'], function($routes) {
