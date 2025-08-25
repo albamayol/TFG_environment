@@ -25,7 +25,7 @@ class Users extends BaseController {
         if (! $this->validate([
             'name'     => 'required',
             'surnames' => 'required',
-            'email'    => 'required|valid_email|is_unique[User.email]',
+            'email'    => 'required|valid_email|is_unique[Usuario.email]',
             'password' => 'required|min_length[8]'
         ])) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());

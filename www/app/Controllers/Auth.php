@@ -36,7 +36,7 @@ class Auth extends BaseController {
         $tel = $this->normalize_phone_to_e164($rawTel, 'ES');
         if ($tel === null) {
             return redirect()->back()->withInput()
-                ->with('errors', ['telephone' => 'Teléfono no válido. Usa formato internacional (+...).']);
+                ->with('errors', ['telephone' => 'Invalid phone number. Use international format (+...).']);
         }
         
         $data = [
@@ -62,7 +62,7 @@ class Auth extends BaseController {
             $managerModel->insert(['id_manager' => $newUserId]);
 
             // success: redirect to login with flash message
-            return redirect()->to('/')->with('message', 'Usuario registrado correctamente');
+            return redirect()->to('/')->with('message', 'User registered successfully');
         } else { // failure: redirect back with the errors array from the model
             return redirect()->back()->withInput()->with('errors', $userModel->errors()); 
         }
@@ -80,8 +80,8 @@ class Auth extends BaseController {
         // First Basic validation
         if ($email === '' || $pass === '') {
             return $isAjax
-                ? $this->jsonLoginError('Email y contraseña son obligatorios')
-                : redirect()->back()->with('error', 'Email y contraseña son obligatorios');
+                ? $this->jsonLoginError('Email and password are required')
+                : redirect()->back()->with('error', 'Email and password are required');
         }
 
         $userModel = new UserModel();
@@ -89,21 +89,20 @@ class Auth extends BaseController {
 
         if (!$user || empty($user['password'])) {
             return $isAjax
-            ? $this->jsonLoginError('Credenciales inválidas')
-            : redirect()->back()->with('error', 'Credenciales inválidas');
+            ? $this->jsonLoginError('Invalid Credentials')
+            : redirect()->back()->with('error', 'Invalid Credentials');
         }
 
         if (!$user || !password_verify($pass, $user['password'])) {
             return $isAjax
-                ? $this->jsonLoginError('Credenciales inválidas')
-                : redirect()->back()->with('error', 'Credenciales inválidas');
+                ? $this->jsonLoginError('Invalid Credentials')
+                : redirect()->back()->with('error', 'Invalid Credentials');
         }
 
         // Get the user's role
         $role = $userModel->getRole($user['id_user']);
         $user['role_name'] = $role;
 
-        // Store minimal session (keep your existing key names to avoid breaking nav)
         $session = session();
         session()->set([
             'id_user'   => $user['id_user'],

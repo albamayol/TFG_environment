@@ -28,7 +28,7 @@ class Projects extends BaseController {
         return view('projects/create');
     }
 
-    public function store() {
+    public function save() {
         if (! $this->validate([
             'name' => 'required|min_length[3]'
         ])) {

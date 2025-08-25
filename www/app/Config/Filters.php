@@ -36,6 +36,7 @@ class Filters extends BaseFilters
         'performance'   => PerformanceMetrics::class,
         'auth'          => \App\Filters\AuthFilter::class,
         'role'          => \App\Filters\RoleFilter::class,
+        'loadUserTz'    => \App\Filters\LoadUserTimezoneFilter::class,
     ];
 
     /**
@@ -72,7 +73,8 @@ class Filters extends BaseFilters
     public array $globals = [
         'before' => [
             // 'honeypot',
-             'csrf',
+            'csrf',
+            'loadUserTz', // Load user timezone from cookie if not in session
             // 'invalidchars',
         ],
         'after' => [

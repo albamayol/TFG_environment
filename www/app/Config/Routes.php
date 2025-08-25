@@ -5,7 +5,9 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-//$routes->get('/', 'Home::index');
+
+$routes->post('timezone/set-timezone', 'Timezone::setTimezone');
+
 $routes->get('/', 'Auth::login');
 $routes->post('/login', 'Auth::attempt');
 $routes->get('/logout', 'Auth::logout');
@@ -13,17 +15,17 @@ $routes->get('/signup', 'Auth::signup');
 $routes->post('/signup', 'Auth::register');
 
 $routes->group('/Tasks', ['filter' => 'auth'], function($routes) {
-    $routes->get('MyDay', 'Tasks::myDay');
-    $routes->get('MyTasks', 'Tasks::myTasks');
-    $routes->get('createTask', 'Tasks::create');
-    $routes->post('store', 'Tasks::store');
-    $routes->get('(:num)', 'Tasks::show/$1');
+    $routes->get('MyDay', 'Tasks::myDay');      //any logged-in user
+    $routes->get('MyTasks', 'Tasks::myTasks');  // any logged-in user
+    $routes->get('createTask', 'Tasks::create', ['filter' => 'role:Profile_Admin,Manager,Head_Of_Team']);
+    $routes->post('store', 'Tasks::save', ['filter' => 'role:Profile_Admin,Manager,Head_Of_Team']);
+    $routes->get('(:num)', 'Tasks::show/$1');   // any logged-in user (ownership check in controller)
 });
 
 $routes->group('/Projects', ['filter' => 'auth'], function($routes) {
     $routes->get('/MyProjects', 'Projects::index');
     $routes->get('/createProject', 'Projects::create');
-    $routes->post('/store', 'Projects::store');
+    $routes->post('/store', 'Projects::save');
     $routes->get('/MyProjects/(:num)', 'Projects::show/$1');
 });
 

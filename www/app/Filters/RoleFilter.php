@@ -19,7 +19,7 @@ class RoleFilter implements FilterInterface {
         }
         
         // 2) Read the current user's single role from the session.
-        //    Ex: 'admin' | 'manager' | 'head_of_team' | 'worker'
+        //    Ex: 'Profile_Admin' | 'Manager' | 'Head_Of_Team' | 'Worker'
         $userRole = $session->get('role_name') ?? '';
 
         // 3) The $arguments come from routes (role:admin,manager,head_of_team).

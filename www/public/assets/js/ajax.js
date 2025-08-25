@@ -3,7 +3,7 @@ $(function () {
   const $resp = $('#response');
 
   function showError(msg) {
-    $resp.html('<p class="error" style="color:red; margin-top: .5rem;">' + msg + '</p>');
+    $resp.html('<div class="alert alert-danger" role="alert">' + msg + '</div>');
   }
 
   // Get current CSRF from meta
