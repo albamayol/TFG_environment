@@ -68,21 +68,41 @@ class Tasks extends BaseController {
 
         // UTC day boundaries
         [$startToday, $endToday] = getUtcDayBounds();
-        $endWeek   = $startToday->addDays(7);
-        $startLater = $startToday->addDays(8);
-        $endLater  = $startToday->addDays(30);
-        
-        $data['tasks']       = $this->decorateForDisplay($this->taskModel->getTasksForUser($userId));
-        $data['tasksToday']  = $this->decorateForDisplay($this->taskModel->getTasksForUserInRange(
-            $userId, $startToday->toDateTimeString(), $endToday->toDateTimeString()));
-        $data['tasksWeek']   = $this->decorateForDisplay($this->taskModel->getTasksForUserInRange(
-            $userId, $startToday->toDateTimeString(), $endWeek->toDateTimeString()));
-        $data['tasksLater']  = $this->decorateForDisplay($this->taskModel->getTasksForUserInRange(
-            $userId, $startLater->toDateTimeString(), $endLater->toDateTimeString()));
-        $data['tasksExpired'] = $this->decorateForDisplay($this->taskModel->getOverdueTasksForUser($userId));
+        $nowUtc    = utcNow();
+        $weekEnd   = $startToday->addDays(7);   // end of “week” window (exclusive)
+        $laterEnd  = $startToday->addDays(30);  // end of “later” window (exclusive)
 
+        // TODAY: from max(startOfToday, now) to endOfToday (half-open)
+        $todayStart = $nowUtc > $startToday ? $nowUtc : $startToday;
+
+        // Disjoint buckets
+        $tasksToday  = $this->taskModel->getTasksForUserInRange($userId,
+                            $todayStart->toDateTimeString(), $endToday->toDateTimeString());
+
+        $tasksWeek   = $this->taskModel->getTasksForUserInRange($userId,
+                            $endToday->toDateTimeString(), $weekEnd->toDateTimeString());
+
+        $tasksLaterRanged = $this->taskModel->getTasksForUserInRange($userId,
+                            $weekEnd->toDateTimeString(), $laterEnd->toDateTimeString());
+
+        $tasksLaterNoDate = $this->taskModel->getTasksForUserWithNoLimitDate($userId);
+
+        // Merge later buckets and ensure uniqueness by id_task
+        $tasksLater = $this->uniqueByIdTask(array_merge($tasksLaterRanged, $tasksLaterNoDate));
+
+        // Passed Deadline: strictly before NOW (no overlap with Today)
+        $tasksExpired = $this->taskModel->getOverdueTasksForUser($userId);
+
+        $data['tasksToday']   = $this->decorateForDisplay($tasksToday);
+        $data['tasksWeek']    = $this->decorateForDisplay($tasksWeek);
+        $data['tasksLater']   = $this->decorateForDisplay($tasksLater);
+        $data['tasksExpired'] = $this->decorateForDisplay($tasksExpired);
         $data['canCreateTask'] = $canCreateTask;
         
+        $data['tasks'] = $this->decorateForDisplay(
+            array_merge($tasksToday, $tasksWeek, $tasksLater, $tasksExpired)
+        );
+
         return view('/Tasks/MyTasks', $data);
     }
 
@@ -255,5 +275,21 @@ class Tasks extends BaseController {
             $t['limit_date_display'] = $utc ? toUserTimezone($utc, $fmt) : null;
             return $t;
         }, $tasks);
+    }
+
+    /**
+     * Helper: unique by id_task while preserving order.
+     */
+    private function uniqueByIdTask(array $tasks): array {
+        $seen = [];
+        $out  = [];
+        foreach ($tasks as $t) {
+            $id = $t['id_task'];
+            if (!isset($seen[$id])) {
+                $seen[$id] = true;
+                $out[] = $t;
+            }
+        }
+        return $out;
     }
 }
