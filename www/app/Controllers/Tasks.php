@@ -31,7 +31,7 @@ class Tasks extends BaseController {
         $tasks = $this->decorateForDisplay($tasks); 
         $userName = $this->userModel->find($userId)['name'] ?? '';
 
-        //tracker de las tasks de hoy
+        //tracker of today's tasks
         $total = count($tasks);
         $completed = 0;
         foreach ($tasks as $task) {
@@ -40,10 +40,9 @@ class Tasks extends BaseController {
             }
         }
 
-        // compute permission flag
         $canCreateTask = $this->canCreateTasks($userId);
 
-        // Get user's timezone from session or default to UTC
+        //Get user's timezone from session or default to UTC
         $tz = session()->get('user_timezone') ?? 'UTC';
         $today = Time::now('UTC')->setTimezone($tz)->format('d-m-Y');
         $dayOfWeek = Time::now('UTC')->setTimezone($tz)->format('l jS \of F Y'); 

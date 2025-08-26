@@ -113,11 +113,17 @@ class TaskModel extends Model {
      */
     public function getTodayTasksForUser(int $userId): array {
         [$start, $end] = getUtcDayBounds();
-        return $this->getTasksForUserInRange(
-            $userId,
-            $start->toDateTimeString(),
-            $end->toDateTimeString()
-        );
+        $now = utcNow();
+
+        $lowerBound = ($now > $start) ? $now : $start;
+        $builder = $this->select('Task.*')
+            ->join('tasks_users', 'Task.id_task = tasks_users.id_task')
+            ->where('tasks_users.id_user', $userId)
+            ->where('Task.limit_date >=', $lowerBound->toDateTimeString())
+            ->where('Task.limit_date <',  $end->toDateTimeString());
+
+        $builder = $this->applyOrdering($builder);
+        return $builder->findAll();
     }
 
     public function getTasksForUserFromDate(int $userId, string $startDate): array {

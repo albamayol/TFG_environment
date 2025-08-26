@@ -195,8 +195,8 @@ a:hover { text-decoration: underline; }
 /*    TASKS STYLE   */
 /* Task list & cards */
 .tasks-container { 
-  display:flex; 
-  flex-direction:column; 
+  display:grid; 
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap:12px; 
 }
 
@@ -209,7 +209,6 @@ a:hover { text-decoration: underline; }
   padding: 12px;
   cursor: pointer;
 }
-
 /* Cards are white: ensure dark readable text */
 .task-card, .task-card p, .task-card strong { color: #222; }
 

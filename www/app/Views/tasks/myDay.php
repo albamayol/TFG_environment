@@ -12,7 +12,7 @@
 <?php endif; ?>
 
 <?php if (empty($tasks)): ?>
-  <p>All quiet here...</p>
+    <p>All quiet here...</p>
 <?php else: ?>
   <div class="tasks-container">
     <?php foreach ($tasks as $task): ?>
