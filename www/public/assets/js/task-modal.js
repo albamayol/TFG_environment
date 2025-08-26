@@ -37,8 +37,25 @@
     if (!card || e.target.closest('.state-select')) return;
 
     // Build modal HTML from the card’s dataset
+    const canDelete = card.dataset.canDelete === '1';
     const html = `
       <h2 style="margin-top:0">${escapeHtml(card.dataset.name || '')}</h2>
+      ${canDelete ? `
+        <button
+          type="button"
+          id="deleteTaskBtn"
+          class="icon-btn"
+          title="Delete task"
+          aria-label="Delete task"
+          data-id="${escapeHtml(card.dataset.taskId)}"
+          style="flex:0 0 auto"
+        >
+          <!-- trash icon SVG -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 6h18M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m1 0v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V6h12zM10 10v8m4-8v8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      ` : ''}
       ${escapeHtml(card.dataset.description || '') ? `<p>${escapeHtml(card.dataset.description)}</p>` : ''}
       <p><strong>Duration:</strong> ${escapeHtml(card.dataset.duration || '-')}</p>
       <p><strong>Priority:</strong> ${escapeHtml(card.dataset.priority || '-')}</p>
@@ -46,6 +63,7 @@
       <p><strong>State:</strong> ${escapeHtml(card.dataset.state || '-')}</p>
       <p><strong>Person of interest:</strong> ${escapeHtml(card.dataset.person || '-')}</p>
       <p><strong>Origin:</strong> ${escapeHtml(card.dataset.origin || '-')}</p>
+      
     `;
     bodyHost.innerHTML = html;
 
@@ -53,7 +71,7 @@
     document.body.style.overflow = 'hidden';
   });
 
-  // 3) Change state (delegated, works for cards rendered anywhere)
+  //Change state (delegated, works for cards rendered anywhere)
   document.addEventListener('change', (e) => {
     const select = e.target.closest('.state-select');
     if (!select) return;
@@ -95,6 +113,38 @@
       select.value = prev;
     });
   });
+
+  // delegated click handler for delete
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('button#deleteTaskBtn');
+    if (!btn) return;
+
+    const card = document.querySelector(`.task-card[data-task-id="${btn.dataset.id}"]`);
+    const url  = card?.dataset.deleteUrl;
+    if (!url) return;
+    if (!confirm('Delete this task?')) return;
+
+    fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify(csrf())     // reuse your csrf() helper
+    })
+    .then(r => r.json().catch(() => ({})))
+    .then(json => {
+      updateCsrfFromResponse(json);    // keep CSRF fresh for next calls
+      if (json?.ok) {
+        card?.remove();
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+        if (typeof recalcCompletionPct === 'function') recalcCompletionPct();
+      } else {
+        alert(json?.error || 'Delete failed');
+      }
+    })
+    .catch(() => alert('Delete failed'));
+  });
+
 
   // tiny util to avoid XSS when injecting dataset values
   function escapeHtml(str) {

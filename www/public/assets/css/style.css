@@ -263,6 +263,25 @@ a:hover { text-decoration: underline; }
   to   { transform: translateY(0);   opacity: 1; }
 }
 
+.modal-actions .btn-danger{
+  background: #ef4444; color:#fff; border:1px solid transparent; border-radius:10px; padding:10px 14px;
+}
+.modal-actions .btn-danger:hover{ filter: brightness(1.05); }
+
+/*ICON STYLES*/
+.icon-btn {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:36px; height:36px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background: var(--card-2);
+  color:#ef4444;               /* red-ish icon */
+  cursor:pointer;
+}
+.icon-btn:hover{ filter: brightness(1.1); }
+
 /* “No tasks” messages in white columns */
 .board .column > p { color: #333; }
 

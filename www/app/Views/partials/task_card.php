@@ -1,3 +1,9 @@
+<?php
+  $meEmail    = trim((string)($currentUserEmail ?? ''));
+  $ownerEmail = trim((string)($task['person_of_interest'] ?? ''));
+  $isOwner    = ($ownerEmail !== '') && (strcasecmp($ownerEmail, $meEmail) === 0);
+?>
+
 <div
     class="task-card"
     data-task-id="<?= esc($task['id_task']) ?>"
@@ -9,6 +15,9 @@
     data-state="<?= esc($task['state']) ?>"
     data-person="<?= esc($task['person'] ?? ($task['person_of_interest'] ?? '-')) ?>"
     data-origin="<?= esc($task['origin_of_task']) ?>"
+
+    data-can-delete="<?= $isOwner ? '1' : '0' ?>"
+    data-delete-url="<?= site_url('Tasks/delete/' . $task['id_task']) ?>"
 >
     <div class="task-header">
         <strong><?= esc($task['name']) ?></strong>

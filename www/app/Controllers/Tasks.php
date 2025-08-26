@@ -8,6 +8,7 @@ use App\Models\TasksUsersModel;
 use App\Models\ProjectModel;
 
 use CodeIgniter\I18n\Time;
+use CodeIgniter\Database\Exceptions\DatabaseException;
 
 class Tasks extends BaseController {
     protected $taskModel;
@@ -55,6 +56,8 @@ class Tasks extends BaseController {
             'percentage' => $total > 0 ? round(($completed / $total) * 100) : 0,
             'canCreateTask' => $canCreateTask,
         ];
+        $currentUser = $this->userModel->find((int) session('id_user'));
+        $data['currentUserEmail'] = $currentUser['email'] ?? null;
 
         return view('/Tasks/MyDay', $data);
     }
@@ -70,7 +73,7 @@ class Tasks extends BaseController {
         [$startToday, $endToday] = getUtcDayBounds();
         $nowUtc    = utcNow();
         $weekEnd   = $startToday->addDays(7);   // end of “week” window (exclusive)
-        $laterEnd  = $startToday->addDays(30);  // end of “later” window (exclusive)
+        //$laterEnd  = $startToday->addDays(30);  // end of “later” window (exclusive)
 
         // TODAY: from max(startOfToday, now) to endOfToday (half-open)
         $todayStart = $nowUtc > $startToday ? $nowUtc : $startToday;
@@ -82,8 +85,7 @@ class Tasks extends BaseController {
         $tasksWeek   = $this->taskModel->getTasksForUserInRange($userId,
                             $endToday->toDateTimeString(), $weekEnd->toDateTimeString());
 
-        $tasksLaterRanged = $this->taskModel->getTasksForUserInRange($userId,
-                            $weekEnd->toDateTimeString(), $laterEnd->toDateTimeString());
+        $tasksLaterRanged = $this->taskModel->getTasksForUserFromDate($userId, $weekEnd->toDateTimeString());
 
         $tasksLaterNoDate = $this->taskModel->getTasksForUserWithNoLimitDate($userId);
 
@@ -98,7 +100,9 @@ class Tasks extends BaseController {
         $data['tasksLater']   = $this->decorateForDisplay($tasksLater);
         $data['tasksExpired'] = $this->decorateForDisplay($tasksExpired);
         $data['canCreateTask'] = $canCreateTask;
-        
+        $currentUser = $this->userModel->find((int) session('id_user'));
+        $data['currentUserEmail'] = $currentUser['email'] ?? null;
+
         $data['tasks'] = $this->decorateForDisplay(
             array_merge($tasksToday, $tasksWeek, $tasksLater, $tasksExpired)
         );
@@ -293,33 +297,79 @@ class Tasks extends BaseController {
         return $out;
     }
 
-    public function updateState($id = null)
-{
-    if (!$this->request->is('post')) {
-        return $this->response->setStatusCode(405);
+    public function updateState($id = null) {
+        if (!$this->request->is('post')) {
+            return $this->response->setStatusCode(405);
+        }
+
+        $payload = $this->request->getJSON(true) ?? [];
+        $state   = $payload['state'] ?? null;
+
+        $allowed = ['To Do','In Progress','Done'];
+        if (!in_array($state, $allowed, true)) {
+            return $this->response->setStatusCode(422)->setJSON(['error' => 'Invalid state']);
+        }
+
+        // TODO: authorize the user owns/can edit this task
+        $ok = $this->taskModel->update($id, ['state' => $state]);
+
+        if (!$ok) {
+            return $this->response->setStatusCode(500)->setJSON(['error' => 'DB update failed']);
+        }
+
+        //also return a fresh CSRF token if you rotate per-request
+        return $this->response->setJSON([
+            'ok'   => true,
+            'id'   => (int)$id,
+            'state'=> $state,
+            'csrf' => ['name' => csrf_token(), 'hash' => csrf_hash()]
+        ]);
     }
+     public function delete($id = null)
+    {
+        if (!$id || !$this->request->is('post')) {
+            return $this->response->setStatusCode(405);
+        }
 
-    $payload = $this->request->getJSON(true) ?? [];
-    $state   = $payload['state'] ?? null;
+        $userId = (int)(session('id_user') ?? 0);
+        if ($userId <= 0) {
+            return $this->response->setStatusCode(401)
+                                  ->setJSON(['error' => 'Not authenticated']);
+        }
 
-    $allowed = ['To Do','In Progress','Done'];
-    if (!in_array($state, $allowed, true)) {
-        return $this->response->setStatusCode(422)->setJSON(['error' => 'Invalid state']);
+        // current user (we have id_user in session)
+        $user = model(UserModel::class)->find($userId); // OK to use find(id)
+        if (!$user || empty($user['email'])) {
+            return $this->response->setStatusCode(401)
+                                  ->setJSON(['error' => 'User email not found']);
+        }
+        $meEmail = (string)$user['email'];
+
+        $tasks = model(TaskModel::class);
+
+        $isAdmin = (session('role_name') === 'Profile_Admin');
+        $isOwner = $tasks->isOwnerByEmail((int)$id, $meEmail);
+
+        if (!$isOwner && !$isAdmin) {
+            return $this->response->setStatusCode(403)->setJSON([
+                'error' => 'Forbidden',
+                'csrf'  => ['name' => csrf_token(), 'hash' => csrf_hash()],
+            ]);
+        }
+
+        $ok = $tasks->deleteWithRelations((int)$id);
+
+        if (!$ok) {
+            return $this->response->setStatusCode(500)->setJSON([
+                'error' => 'Delete failed',
+                'csrf'  => ['name' => csrf_token(), 'hash' => csrf_hash()],
+            ]);
+        }
+
+        // success (return new CSRF for your AJAX flow)
+        return $this->response->setJSON([
+            'ok'   => true,
+            'csrf' => ['name' => csrf_token(), 'hash' => csrf_hash()],
+        ]);
     }
-
-    // TODO: authorize the user owns/can edit this task
-    $ok = $this->taskModel->update($id, ['state' => $state]);
-
-    if (!$ok) {
-        return $this->response->setStatusCode(500)->setJSON(['error' => 'DB update failed']);
-    }
-
-    //also return a fresh CSRF token if you rotate per-request
-    return $this->response->setJSON([
-        'ok'   => true,
-        'id'   => (int)$id,
-        'state'=> $state,
-        'csrf' => ['name' => csrf_token(), 'hash' => csrf_hash()]
-    ]);
-}
 }

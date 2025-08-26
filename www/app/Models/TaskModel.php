@@ -36,10 +36,7 @@ class TaskModel extends Model {
                         END)";
 
         // Order by priority asc, then earliest due date asc (NULLs last), then duration asc
-        // NOTE: For NULLS LAST on MySQL < 8, emulate with IS NULL predicate first
         $builder->orderBy($priorityCase, 'ASC', false);
-
-        // Emulate NULLS LAST: first non-NULLs (0), then NULLs (1)
         $builder->orderBy('(Task.limit_date IS NULL)', 'ASC', false);
         $builder->orderBy('Task.limit_date', 'ASC');
         $builder->orderBy('Task.duration', 'ASC');
@@ -121,5 +118,46 @@ class TaskModel extends Model {
             $start->toDateTimeString(),
             $end->toDateTimeString()
         );
+    }
+
+    public function getTasksForUserFromDate(int $userId, string $startDate): array {
+        $builder = $this->select('Task.*')
+            ->join('tasks_users', 'Task.id_task = tasks_users.id_task')
+            ->where('tasks_users.id_user', $userId)
+            ->where('Task.limit_date >=', $startDate);
+
+        $builder = $this->applyOrdering($builder);
+        return $builder->findAll();
+    }
+    
+    public function isOwnerByEmail(int $taskId, string $email): bool {
+        $email = trim($email);
+        if ($email === '') return false;
+
+        $row = $this->select('person_of_interest')
+                    ->where('id_task', $taskId)
+                    ->first();
+
+        if (!$row) return false;
+
+        $poi = trim((string)($row['person_of_interest'] ?? ''));
+        return ($poi !== '' && strcasecmp($poi, $email) === 0);
+    }
+
+    /**
+     * Delete task and related links in tasks_users in a transaction.
+     * Returns true on success.
+     */
+    public function deleteWithRelations(int $taskId): bool {
+        $db = $this->db;
+        $db->transStart();
+
+        // clear links first (FKs commonly RESTRICT)
+        $db->table('tasks_users')->where('id_task', $taskId)->delete();
+        // delete the task
+        $this->delete($taskId);
+
+        $db->transComplete();
+        return $db->transStatus();
     }
 }
