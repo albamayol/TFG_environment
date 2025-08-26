@@ -194,7 +194,12 @@ a:hover { text-decoration: underline; }
 
 /*    TASKS STYLE   */
 /* Task list & cards */
-.tasks-container { display:flex; flex-direction:column; gap:12px; }
+.tasks-container { 
+  display:flex; 
+  flex-direction:column; 
+  gap:12px; 
+}
+
 .task-card {
   background: #fff;                
   color: #222;                       
@@ -204,6 +209,7 @@ a:hover { text-decoration: underline; }
   padding: 12px;
   cursor: pointer;
 }
+
 /* Cards are white: ensure dark readable text */
 .task-card, .task-card p, .task-card strong { color: #222; }
 

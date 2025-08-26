@@ -72,27 +72,17 @@ class Tasks extends BaseController {
         // UTC day boundaries
         [$startToday, $endToday] = getUtcDayBounds();
         $nowUtc    = utcNow();
-        $weekEnd   = $startToday->addDays(7);   // end of “week” window (exclusive)
-        //$laterEnd  = $startToday->addDays(30);  // end of “later” window (exclusive)
-
-        // TODAY: from max(startOfToday, now) to endOfToday (half-open)
+        $weekEnd   = $startToday->addDays(7);   //end of week
         $todayStart = $nowUtc > $startToday ? $nowUtc : $startToday;
 
-        // Disjoint buckets
-        $tasksToday  = $this->taskModel->getTasksForUserInRange($userId,
-                            $todayStart->toDateTimeString(), $endToday->toDateTimeString());
-
-        $tasksWeek   = $this->taskModel->getTasksForUserInRange($userId,
-                            $endToday->toDateTimeString(), $weekEnd->toDateTimeString());
-
+        $tasksToday  = $this->taskModel->getTasksForUserInRange($userId, $todayStart->toDateTimeString(), $endToday->toDateTimeString());
+        $tasksWeek   = $this->taskModel->getTasksForUserInRange($userId, $endToday->toDateTimeString(), $weekEnd->toDateTimeString());
         $tasksLaterRanged = $this->taskModel->getTasksForUserFromDate($userId, $weekEnd->toDateTimeString());
-
         $tasksLaterNoDate = $this->taskModel->getTasksForUserWithNoLimitDate($userId);
 
-        // Merge later buckets and ensure uniqueness by id_task
+        // Merge "later" task arrays and ensure uniqueness by id_task
         $tasksLater = $this->uniqueByIdTask(array_merge($tasksLaterRanged, $tasksLaterNoDate));
 
-        // Passed Deadline: strictly before NOW (no overlap with Today)
         $tasksExpired = $this->taskModel->getOverdueTasksForUser($userId);
 
         $data['tasksToday']   = $this->decorateForDisplay($tasksToday);
@@ -103,9 +93,8 @@ class Tasks extends BaseController {
         $currentUser = $this->userModel->find((int) session('id_user'));
         $data['currentUserEmail'] = $currentUser['email'] ?? null;
 
-        $data['tasks'] = $this->decorateForDisplay(
-            array_merge($tasksToday, $tasksWeek, $tasksLater, $tasksExpired)
-        );
+        //merge all tasks arrays (all columns) into a single 'task' one to load it into the view
+        $data['tasks'] = $this->decorateForDisplay(array_merge($tasksToday, $tasksWeek, $tasksLater, $tasksExpired));
 
         return view('/Tasks/MyTasks', $data);
     }
@@ -121,16 +110,15 @@ class Tasks extends BaseController {
      /**
      * Show the "Create Task" form to privileged users.
      */
-    public function create()
-    {
+    public function create() {
         $userId = session()->get('id_user');
 
-        // Check if the user has a privileged role
+        //Check if the user's role allows task creation
         if (! $this->canCreateTasks($userId)) {
             return redirect()->to('/Tasks/MyDay')->with('error', 'Unauthorized');
         }
 
-        // Fetch projects accessible to this user
+        //Get projects this user participates in
         $projects = $this->projectModel->getProjectsForUser($userId);
 
         // Fetch the initial list of users:
@@ -150,10 +138,9 @@ class Tasks extends BaseController {
      */
     public function save() {
         helper('datetime');
-        //get current user id
+      
         $userId = session()->get('id_user');
 
-        // Ensure only privileged users can create tasks
         if (! $this->canCreateTasks($userId)) {
             return redirect()->to('/Tasks/MyDay')->with('error', 'Unauthorized');
         }
@@ -172,33 +159,29 @@ class Tasks extends BaseController {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        //conversion of date to global UTC for further reconversion to local timezone from the user
-        $limitDateLocal = $this->request->getPost('limit_date'); // e.g. '2025-08-25T09:30' or ''
+        $limitDateLocal = $this->request->getPost('limit_date');
         $limitDateUtc   = null;
 
         if ($limitDateLocal !== null && $limitDateLocal !== '') {
-            // Accept both 'YYYY-MM-DDTHH:mm' and 'YYYY-MM-DDTHH:mm:ss'
-            $tmpDate = str_replace('T', ' ', $limitDateLocal);
-            if (strlen($tmpDate) === 16) { // no seconds
+            $tmpDate = str_replace('T', ' ', $limitDateLocal); //Accept both 'YYYY-MM-DDTHH:mm' and 'YYYY-MM-DDTHH:mm:ss'
+            if (strlen($tmpDate) === 16) { //no seconds
                 $tmpDate .= ':00';
             }
-            // Convert from user's tz (session) to UTC string
-            $limitDateUtc = fromUserTimezone($tmpDate); // returns 'Y-m-d H:i:s' in UTC
+            //Convert from user's tz (session) to UTC string
+            $limitDateUtc = fromUserTimezone($tmpDate); //returns 'Y-m-d H:i:s' in UTC
         }
 
-        // Capture POST fields
+        //Obtain POST fields
         $name        = $this->request->getPost('name');
         $description = $this->request->getPost('description');
         $priority    = $this->request->getPost('priority') ?? 'Medium';
-        //$limitDateRaw   = $this->request->getPost('limit_date') ?: null;
-        //$limitDate   = $limitDateUtc; // Store UTC date or null
         $duration    = $this->request->getPost('duration') ?: null;
         $projectId   = $this->request->getPost('id_project') ?: null;
         $assignedId  = $this->request->getPost('assigned_user');
         $isIndividual = $this->request->getPost('individual') ? true : false;
         $simulated   = $this->request->getPost('simulated') ? 1 : 0;
 
-        // Determine origin_of_task and person_of_interest
+        //Get origin_of_task and person_of_interest
         $origin = 'Individual';
         if ($projectId) {
             $project = $this->projectModel->find($projectId);
@@ -211,7 +194,7 @@ class Tasks extends BaseController {
         $user = $this->userModel->find($userId);
         $userEmail = $user ? $user['email'] : '';
 
-        // Build task data
+        //Build task data
         $taskData = [
             'id_project'      => $projectId,
             'name'            => $name,
@@ -225,11 +208,10 @@ class Tasks extends BaseController {
             'simulated'       => $simulated,
         ];
 
-        // Insert task
+        //Save task (insert)
         $taskId = $this->taskModel->insert($taskData);
 
-        // Determine assignment:
-        // If individual is checked OR no user selected, assign to self.
+        //If individual is checked OR no user selected, assign to self.
         if ($isIndividual || empty($assignedId)) {
             $this->tasksUsersModel->assignUserToTask($userId, $taskId, 'Owner');
         } else {
@@ -243,17 +225,16 @@ class Tasks extends BaseController {
      * AJAX endpoint to get users for a given project.
      * Returns JSON array with id_user, name, surnames.
      */
-    public function usersForProject($projectId = null)
-    {
+    public function usersForProject($projectId = null) {
         $userId = session()->get('id_user');
 
-        // Use ID 0 or null to indicate "no project selected"
+        //Use ID 0 or null to indicate "no project selected"
         $projectId = empty($projectId) ? null : (int) $projectId;
 
         if ($projectId) {
             $users = $this->tasksUsersModel->getUsersByProjectId($projectId);
         } else {
-            // No project selected: return all possible users for current user role
+            //No project selected: return all possible users for current user role
             $users = $this->tasksUsersModel->getUsersForUserRole($userId);
         }
 
@@ -263,8 +244,7 @@ class Tasks extends BaseController {
     /**
      * Determine if the current user can create tasks.
      */
-    private function canCreateTasks(int $userId): bool
-    {
+    private function canCreateTasks(int $userId): bool {
         $db = \Config\Database::connect();
         return
             $db->table('Profile_Admin')->where('id_prof_admin', $userId)->countAllResults() > 0 ||
@@ -325,23 +305,21 @@ class Tasks extends BaseController {
             'csrf' => ['name' => csrf_token(), 'hash' => csrf_hash()]
         ]);
     }
-     public function delete($id = null)
-    {
+
+    public function delete($id = null) {
         if (!$id || !$this->request->is('post')) {
             return $this->response->setStatusCode(405);
         }
 
         $userId = (int)(session('id_user') ?? 0);
         if ($userId <= 0) {
-            return $this->response->setStatusCode(401)
-                                  ->setJSON(['error' => 'Not authenticated']);
+            return $this->response->setStatusCode(401)->setJSON(['error' => 'Not authenticated']);
         }
 
         // current user (we have id_user in session)
         $user = model(UserModel::class)->find($userId); // OK to use find(id)
         if (!$user || empty($user['email'])) {
-            return $this->response->setStatusCode(401)
-                                  ->setJSON(['error' => 'User email not found']);
+            return $this->response->setStatusCode(401)->setJSON(['error' => 'User email not found']);
         }
         $meEmail = (string)$user['email'];
 

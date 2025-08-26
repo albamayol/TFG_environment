@@ -29,7 +29,6 @@
   </div>
 </div>
 
-<!-- Load the centralized modal logic -->
 <script src="<?= base_url('assets/js/task-modal.js') ?>" defer></script>
 
 <?= $this->endSection() ?>

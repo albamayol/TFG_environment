@@ -67,7 +67,6 @@ $tasksExpired = isset($tasksExpired) ? $tasksExpired : [];
 
 <!-- Styles specific to the My Tasks board and modal.  Card styling lives in style.css via task_card.php. -->
 <style>
-  /* Board layout: four columns for Today, This Week, Later and Expired. */
   .board {
     display: flex;
     gap: 16px;
@@ -90,7 +89,6 @@ $tasksExpired = isset($tasksExpired) ? $tasksExpired : [];
   }
 </style>
 
-<!-- Load the centralized modal logic -->
 <script src="<?= base_url('assets/js/task-modal.js') ?>" defer></script>
 
 <?= $this->endSection() ?>
