@@ -292,4 +292,34 @@ class Tasks extends BaseController {
         }
         return $out;
     }
+
+    public function updateState($id = null)
+{
+    if (!$this->request->is('post')) {
+        return $this->response->setStatusCode(405);
+    }
+
+    $payload = $this->request->getJSON(true) ?? [];
+    $state   = $payload['state'] ?? null;
+
+    $allowed = ['To Do','In Progress','Done'];
+    if (!in_array($state, $allowed, true)) {
+        return $this->response->setStatusCode(422)->setJSON(['error' => 'Invalid state']);
+    }
+
+    // TODO: authorize the user owns/can edit this task
+    $ok = $this->taskModel->update($id, ['state' => $state]);
+
+    if (!$ok) {
+        return $this->response->setStatusCode(500)->setJSON(['error' => 'DB update failed']);
+    }
+
+    //also return a fresh CSRF token if you rotate per-request
+    return $this->response->setJSON([
+        'ok'   => true,
+        'id'   => (int)$id,
+        'state'=> $state,
+        'csrf' => ['name' => csrf_token(), 'hash' => csrf_hash()]
+    ]);
+}
 }

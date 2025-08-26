@@ -156,10 +156,6 @@ a:hover { text-decoration: underline; }
   width: 14px; height: 14px; /* show when disabled */
 }
 
-.badge-low    { background-color: #3498db; } /* Blue for Low */
-.badge-medium { background-color: #9b59b6; } /* Purple for Medium */
-.badge-high   { background-color: #e67e22; } /* Orange for High */
-.badge-urgent { background-color: #e74c3c; } /* Red for Urgent */
 
 @keyframes spin{
   to{ transform: rotate(360deg); }
@@ -168,4 +164,109 @@ a:hover { text-decoration: underline; }
 /* Responsive niceties */
 @media (max-width: 480px){
   .auth-card{ padding: 22px; }
+}
+
+/* Badges for state & priority */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: .8rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.2;
+  vertical-align: middle;
+}
+
+/* States */
+.badge-to-do        { background-color: #95a5a6; }
+.badge-in-progress  { background-color: #f1c40f; color:#222; }
+.badge-done         { background-color: #2ecc71; }
+
+/* Priorities */
+.badge-low          { background-color: #3498db; }
+.badge-medium       { background-color: #9b59b6; }
+.badge-high         { background-color: #e67e22; }
+.badge-urgent       { background-color: #e74c3c; }
+
+/* Align the state badge nicely next to the title */
+.task-header strong { margin-right: 8px; }
+
+/*    TASKS STYLE   */
+/* Task list & cards */
+.tasks-container { display:flex; flex-direction:column; gap:12px; }
+.task-card {
+  background: #fff;                
+  color: #222;                       
+  border: 1px solid #e0e4e8;         
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.06);
+  padding: 12px;
+  cursor: pointer;
+}
+/* Cards are white: ensure dark readable text */
+.task-card, .task-card p, .task-card strong { color: #222; }
+
+/* Header row: title left, state pill right */
+.task-card .task-header {
+  display: flex;
+  align-items: center;
+}
+
+/* Push the state pill to the far right */
+.task-card .task-header .state-badge {
+  margin-left: auto;
+}
+/* If the last thing in the header is a badge, push it right */
+.task-card .task-header .badge:last-child { margin-left: auto; }
+
+/* Modal body is white too */
+/*.modal-content { color: #240808; }*/
+
+/* === Shared modal styles === */
+.modal{
+  position: fixed;
+  inset: 0;
+  display: none;                /* JS toggles this to flex */
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,.55);  /* dimmed backdrop */
+  z-index: 10000;               /* above everything */
+}
+
+.modal-content{
+  position: relative;
+  background: #fff;             /* <- important: white panel */
+  color: #222;                  /* readable on white */
+  width: min(720px, 92vw);
+  border-radius: 12px;
+  padding: 20px 22px;
+  box-shadow: 0 12px 36px rgba(0,0,0,.35);
+  animation: modal-in .18s ease-out;
+}
+
+.modal-close{
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  border: 0;
+  background: transparent;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #666;
+}
+
+/*animation for when modal appears*/
+@keyframes modal-in {
+  from { transform: translateY(6px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}
+
+/* “No tasks” messages in white columns */
+.board .column > p { color: #333; }
+
+.state-select {
+  margin-top:8px; width:100%; padding:8px 10px; border-radius:8px;
+  border:1px solid #ccc; background: #fff; color: #222; font-size: .95rem;
 }

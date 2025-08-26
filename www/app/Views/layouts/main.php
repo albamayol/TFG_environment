@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title><?= esc($title ?? 'Pasmo') ?></title>
-    <link rel="stylesheet" href="assets/css/style.css">
-
+    <link rel="stylesheet" href="<?= base_url('assets/css/style.css?v=' . time()) ?>">
     <!-- Expose CSRF to JS (CI4 helpers) -->
     <meta name="csrf-token-name" content="<?= esc(csrf_token()) ?>">
     <meta name="csrf-token" content="<?= esc(csrf_hash()) ?>">
