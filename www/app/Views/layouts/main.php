@@ -7,6 +7,9 @@
     <!-- Expose CSRF to JS (CI4 helpers) -->
     <meta name="csrf-token-name" content="<?= esc(csrf_token()) ?>">
     <meta name="csrf-token" content="<?= esc(csrf_hash()) ?>">
+    <!-- Assets base + direct URL to the trash icon (with cache-busting) -->
+    <meta name="assets-url" content="<?= rtrim(base_url('assets'), '/') ?>">
+
 </head>
 
 <!-- Script to detect user timezone and send it to the server -->

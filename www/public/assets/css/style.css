@@ -269,18 +269,35 @@ a:hover { text-decoration: underline; }
 .modal-actions .btn-danger:hover{ filter: brightness(1.05); }
 
 /*ICON STYLES*/
-.icon-btn {
+.icon-btn--trash {
+  width:36px;height:36px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  background:#f7f7f8;
+  cursor:pointer;
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  width:36px; height:36px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  background: var(--card-2);
-  color:#ef4444;               /* red-ish icon */
-  cursor:pointer;
+  position:relative; 
+  overflow:hidden;
 }
-.icon-btn:hover{ filter: brightness(1.1); }
+.icon-btn--trash::before{
+  content:"";
+  width:22px;height:22px; 
+  display:block;
+  background-color: var(--icon-color);
+  mask: url('/assets/media/icons/trash_bin.svg') no-repeat 50% 50% / contain;
+  -webkit-mask: url('/assets/media/icons/trash_bin.svg') no-repeat 50% 50% / contain;
+}
+
+.icon-btn:hover{ 
+  filter: brightness(1.1); 
+}
+.icon-btn img{ 
+  width:22px; 
+  height:22px; 
+  display:block; 
+}
 
 /* “No tasks” messages in white columns */
 .board .column > p { color: #333; }

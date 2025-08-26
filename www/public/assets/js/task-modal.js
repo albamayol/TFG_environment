@@ -6,13 +6,15 @@
     return name && hash ? { [name]: hash } : {};
   }
   function updateCsrfFromResponse(json) {
-  if (json && json.csrf && json.csrf.name && json.csrf.hash) {
-    const n = document.querySelector('meta[name="csrf-token-name"]');
-    const h = document.querySelector('meta[name="csrf-token"]');
-    if (n) n.content = json.csrf.name;
-    if (h) h.content = json.csrf.hash;
+    if (json && json.csrf && json.csrf.name && json.csrf.hash) {
+      const n = document.querySelector('meta[name="csrf-token-name"]');
+      const h = document.querySelector('meta[name="csrf-token"]');
+      if (n) n.content = json.csrf.name;
+      if (h) h.content = json.csrf.hash;
+    }
   }
-}
+
+  const ICON_TRASH = document.querySelector('meta[name="assets-url"]')?.content + '/media/icons/trash_bin.svg';
 
   const modal = document.getElementById('taskModal');
   if (!modal) return;
@@ -44,16 +46,14 @@
         <button
           type="button"
           id="deleteTaskBtn"
-          class="icon-btn"
+          class="icon-btn icon-btn--trash"
           title="Delete task"
           aria-label="Delete task"
           data-id="${escapeHtml(card.dataset.taskId)}"
           style="flex:0 0 auto"
         >
           <!-- trash icon SVG -->
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M3 6h18M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m1 0v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V6h12zM10 10v8m4-8v8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <img src="${ICON_TRASH}" alt="Delete" width="22" height="22" loading="eager" decoding="async">
         </button>
       ` : ''}
       ${escapeHtml(card.dataset.description || '') ? `<p>${escapeHtml(card.dataset.description)}</p>` : ''}
