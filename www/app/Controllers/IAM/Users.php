@@ -14,8 +14,8 @@ class Users extends BaseController {
 
     public function usersInApp() {
         $users = $this->userModel->getUsersForIAM();
-
-        return view('IAM/Users', ['users' => $users]);
+        $canDeleteUsers = (session('role_name') === 'Profile_Admin');
+        return view('IAM/Users', ['users' => $users, 'canDeleteUsers' => $canDeleteUsers]);
     }
 
     public function create() {
@@ -40,5 +40,53 @@ class Users extends BaseController {
         ]);
 
         return redirect()->to('/IAM/Users')->with('message', 'Usuario creado');
+    }
+
+    public function deleteUser($id = null) {
+        if (!$id || !$this->request->is('post')) {
+            return $this->response->setStatusCode(405)->setJSON([
+                'ok' => false,
+                'error' => 'Method Not Allowed',
+                'csrf' => ['name' => csrf_token(), 'hash' => csrf_hash()]
+            ]);
+        }
+        $userId = (int)(session('id_user') ?? 0);
+        if ($userId <= 0) {
+            return $this->response->setStatusCode(401)->setJSON([
+                'ok' => false,
+                'error' => 'Not authenticated',
+                'csrf'  => ['name' => csrf_token(), 'hash' => csrf_hash()],
+            ]);
+        }
+        $canDeleteUsers = (session('role_name') === 'Profile_Admin');
+        if (!$canDeleteUsers) {
+            return $this->response->setStatusCode(403)->setJSON([
+                'ok'    => false,
+                'error' => 'Forbidden Action',
+                'csrf'  => ['name' => csrf_token(), 'hash' => csrf_hash()],
+            ]);
+        }
+
+        $ok = $this->userModel->deleteUser($id);
+        
+        if(!$ok) {
+            return $this->response->setStatusCode(500)->setJSON([
+                'ok'    => false,
+                'error' => 'Error deleting user',
+                'csrf'  => ['name' => csrf_token(), 'hash' => csrf_hash()],
+            ]);
+        }
+        return $this->response->setStatusCode(200)->setJSON([
+            'ok'      => true,
+            'message' => 'User deleted successfully',
+            'csrf'    => ['name' => csrf_token(), 'hash' => csrf_hash()],
+        ]);
+    }
+
+     /**
+     * Determine if the current user can delete users.
+     */
+    private function canDeleteUser(int $userId): bool {
+        return $this->userModel->getRole($userId) === 'Profile_Admin' ?? false;
     }
 }

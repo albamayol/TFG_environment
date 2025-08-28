@@ -29,11 +29,10 @@
   modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.style.display !== 'none') closeModal(); });
 
-  // 1) Prevent opening the modal when using the <select>
+  //Prevents opening the modal when using the <select>
   document.addEventListener('mousedown', (e) => { if (e.target.closest('.state-select')) e.stopPropagation(); }, { capture:true });
   document.addEventListener('click',     (e) => { if (e.target.closest('.state-select')) e.stopPropagation(); }, { capture:true });
 
-  // 2) Open modal from any .task-card (delegated)
   document.addEventListener('click', (e) => {
     const card = e.target.closest('.task-card');
     if (!card || e.target.closest('.state-select')) return;

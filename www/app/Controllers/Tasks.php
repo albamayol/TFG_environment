@@ -344,7 +344,7 @@ class Tasks extends BaseController {
         }
 
         // success (return new CSRF for your AJAX flow)
-        return $this->response->setJSON([
+        return $this->response->setStatusCode(200)->setJSON([
             'ok'   => true,
             'csrf' => ['name' => csrf_token(), 'hash' => csrf_hash()],
         ]);

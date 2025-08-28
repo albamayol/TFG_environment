@@ -143,19 +143,23 @@ class UserModel extends Model {
         }
         return null;
     }
-    /*public function getRole(int $userId) {
-        if ($this->db->table('Profile_Admin')->where('id_prof_admin', $userId)->countAllResults() > 0) {
-            return 'Profile_Admin';
+
+    public function deleteUser(int $userId): bool {
+        $userToDeleteRole = $this->getRole($userId);
+        switch ($userToDeleteRole) {
+            case 'Profile_Admin':
+                $this->profileAdminModel->where('id_profile_admin', $userId)->delete();
+                break;
+            case 'Manager':
+                $this->managerModel->where('id_manager', $userId)->delete();
+                break;
+            case 'Head_Of_Team':
+                $this->headOfTeamModel->where('id_head_of_team', $userId)->delete();
+                break;
+            case 'Worker':
+                $this->workerModel->where('id_worker', $userId)->delete();
+                break;
         }
-        if ($this->db->table('Manager')->where('id_manager', $userId)->countAllResults() > 0) {
-            return 'Manager';
-        }
-        if ($this->db->table('Head_Of_Team')->where('id_head_of_team', $userId)->countAllResults() > 0) {
-            return 'Head_Of_Team';
-        }
-        if ($this->db->table('Worker')->where('id_worker', $userId)->countAllResults() > 0) {
-            return 'Worker';
-        }
-        return null;
-    }*/
+        return $this->delete($userId);
+    }
 }

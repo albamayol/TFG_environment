@@ -35,6 +35,7 @@ $routes->group('/IAM', ['filter' => 'auth', 'role:Profile_Admin,Manager'], funct
     $routes->get('Users', 'IAM\Users::usersInApp');
     $routes->get('Users/createUser', 'IAM\Users::create');
     $routes->post('Users/store', 'IAM\Users::store');
+    $routes->post('Users/delete/(:num)', 'IAM\Users::deleteUser/$1');
 
     $routes->get('Roles', 'IAM\Roles::index');
     $routes->get('Roles/createRole', 'IAM\Roles::create');

@@ -1,9 +1,8 @@
 <?php ?>
 <?= $this->extend('layouts/main') ?>
 <?= $this->section('content') ?>
-    <h1>Users in App</h1>
-        <div class="user-container">
-        <h1 style="color: #11306aff">Users in App</h1>
+    <div class="user-container">
+        <h1 style="color: #11306aff">Users</h1>
         <table id="usersTable">
             <thead>
                 <tr>
@@ -16,16 +15,32 @@
             <tbody>
             <?php foreach ($users as $user): ?>
                 <tr>
-                    <td><?= htmlspecialchars($user['name']) ?></td>
-                    <td><?= htmlspecialchars($user['surnames']) ?></td>
-                    <td><?= htmlspecialchars($user['email']) ?></td>
+                    <td><?= esc ($user['name']) ?></td>
+                    <td><?= esc ($user['surnames']) ?></td>
+                    <td><?= esc ($user['email']) ?></td>
                     <td class="role-label">
                         <?php
                             $role = $user['role'] ?? null;
-                            echo $roleLabels[$role] ?? htmlspecialchars($role ?? '—');
+                            echo $roleLabels[$role] ?? esc ($role ?? '—');
                         ?>
                     </td>
+                    <?php if ($canDeleteUsers): ?>
+                        <td>
+                            <button
+                                type="button"
+                                id="deleteTaskBtn"
+                                class="icon-btn icon-btn--trash js-delete-user"
+                                title="Delete User"
+                                aria-label="Delete User"
+                                data-id="<?= esc($user['id_user']) ?>"
+                                style="flex:0 0 auto"
+                                >
+                                <img src="/assets/media/icons/trash_bin.svg" alt="Delete" width="22" height="22" loading="eager" decoding="async">
+                            </button>
+                        </td>
+                    <?php endif; ?>
                 </tr>
+                
             <?php endforeach; ?>
             </tbody>
         </table>
@@ -84,6 +99,40 @@
                 });
             });
         });
+
+        // Delete user functionality
+        /*document.addEventListener('click', function(e) {    
+            if (e.target.closest('.icon-btn--trash')) {
+                const deleteButton = e.target.closest('.icon-btn--trash');
+                const userId = deleteButton.getAttribute('data-id');
+                if (confirm('Are you sure you want to delete this user?')) {
+                    fetch(`/IAM/Users/delete/${userId}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/json',
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.ok) {
+                            // Remove the user row from the table
+                            button.closest('tr').remove();
+                        } else {
+                            alert('Error deleting user: ' + (data.error || 'Unknown error'));
+                        }
+                    })
+                    .catch(error => {
+                        alert('Error deleting user: ' + error.message);
+                    });
+                }
+            }
+        });*/
     </script>
+
+<script src="/assets/js/users.js"></script>
 
 <?= $this->endSection() ?>
