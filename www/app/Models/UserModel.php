@@ -5,6 +5,20 @@ namespace App\Models;
 use CodeIgniter\Model;
 
 class UserModel extends Model {
+    protected $profileAdminModel;
+    protected $managerModel;
+    protected $headOfTeamModel;
+    protected $workerModel;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->profileAdminModel = new ProfileAdminModel();
+        $this->managerModel = new ManagerModel();
+        $this->headOfTeamModel = new HeadOfTeamModel();
+        $this->workerModel = new WorkerModel();
+    }
+
     protected $table      = 'Usuario';
     protected $primaryKey = 'id_user';
     
@@ -106,7 +120,30 @@ class UserModel extends Model {
             return $this->where('email', $email)->first();
     }
 
-    public function getRole(int $userId) {
+    public function getUsersForIAM() {
+        $users = $this->select('id_user, name, surnames, email')->findAll();
+        foreach ($users as &$user) {
+            $user['role'] = $this->getRole($user['id_user']) ?? null;
+        }
+        return $users;
+    }
+
+    public function getRole (int $userId) {
+        if ($this->profileAdminModel->isProfileAdmin($userId)) {
+            return 'Profile_Admin';
+        }
+        if ($this->managerModel->isManager($userId)) {
+            return 'Manager';
+        }
+        if ($this->headOfTeamModel->isHeadOfTeam($userId)) {
+            return 'Head_Of_Team';
+        }
+        if ($this->workerModel->isWorker($userId)) {
+            return 'Worker';
+        }
+        return null;
+    }
+    /*public function getRole(int $userId) {
         if ($this->db->table('Profile_Admin')->where('id_prof_admin', $userId)->countAllResults() > 0) {
             return 'Profile_Admin';
         }
@@ -120,5 +157,5 @@ class UserModel extends Model {
             return 'Worker';
         }
         return null;
-    }
+    }*/
 }

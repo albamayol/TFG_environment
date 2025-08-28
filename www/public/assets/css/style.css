@@ -20,8 +20,80 @@ html,body{
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
 }
 
-a { color: var(--primary); text-decoration: none; }
-a:hover { text-decoration: underline; }
+a {
+  color: var(--primary); 
+  text-decoration: none; 
+}
+
+a:hover, .iam-link:hover { 
+  background: #e0e0e0;
+  color: #1f2a3e;
+}
+
+nav {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+
+}
+
+nav a, .iam-link {
+     text-decoration: none;
+    color: inherit;
+    padding: 0 1em;                /* Only horizontal padding */
+    border-radius: 4px;
+    transition: border 0.2s, background 0.2s;
+    cursor: pointer;
+    font-size: 1em;
+    display: flex;                 /* Use flex for perfect centering */
+    align-items: center;           /* Center vertically */
+    justify-content: center;       /* Center horizontally */
+    height: 40px;
+    min-width: 100px;              /* Optional: consistent width */
+    box-sizing: border-box;
+    border: 2px solid transparent;
+    text-align: center;
+}
+
+details.iam-details {
+    position: relative;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+details.iam-details[open] > summary.iam-link {
+    background: #e0e0e000;
+}
+
+details.iam-details > summary.iam-link {
+    list-style: none;
+    outline: none;
+    cursor: pointer;
+    display: inline-block;
+    height: 40px;
+    line-height: 40px;
+    box-sizing: border-box;
+    border: 2px solid transparent;        /* Center text horizontally */
+}
+
+details.iam-details > a {
+    display: block;
+    background: #ffffff00;
+    margin: 0;
+    padding-left: 2em;
+    border-radius: 0;
+    min-width: 120px;
+    font-size: 0.95em;
+}
+
+details.iam-details[open] > a {
+    border-bottom: 1px solid #eee;
+}
+
+details.iam-details > a:last-child {
+    border-bottom: none;
+}
 
 .auth-page{
   min-height: calc(100dvh - 80px);

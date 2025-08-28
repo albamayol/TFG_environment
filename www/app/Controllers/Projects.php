@@ -13,7 +13,7 @@ class Projects extends BaseController {
 
     public function index() {
         $data['projects'] = $this->projectModel->findAll();
-        return view('projects/my_projects', $data);
+        return view('projects/myProjects', $data);
     }
 
     public function show($id) {
@@ -43,6 +43,6 @@ class Projects extends BaseController {
             'end_date'    => $this->request->getPost('end_date')
         ]);
 
-        return redirect()->to('/Projects/MyProjects')->with('message', 'Proyecto creado');
+        return redirect()->to('projects/myProjects')->with('message', 'Proyecto creado');
     }
 }

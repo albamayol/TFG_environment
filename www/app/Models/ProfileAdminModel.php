@@ -8,7 +8,7 @@ class ProfileAdminModel extends Model {
     protected $primaryKey = 'id_prof_admin';
     protected $allowedFields = ['id_prof_admin'];
 
-    public function isAdmin(int $userId): bool {
+    public function isProfileAdmin(int $userId): bool {
         return $this->where('id_prof_admin', $userId)->countAllResults() > 0;
     }
 }

@@ -55,7 +55,7 @@ $(function () {
       if (data && data.csrf) refreshCsrf(data.csrf);
 
       if (!data || !data.success) {
-        showError((data && data.error) || 'Error de autenticación');
+        showError((data && data.error) || 'Authentication error');
         return;
       }
       // success → redirect
@@ -64,7 +64,7 @@ $(function () {
     .fail(function (jqXHR) {
       const data = jqXHR.responseJSON || {};
       if (data && data.csrf) refreshCsrf(data.csrf);
-      showError(data.error || 'Ha ocurrido un error. Inténtalo de nuevo.');
+      showError(data.error || 'An error occurred. Please try again.');
     })
     .always(function () {
       $submit.prop('disabled', false);

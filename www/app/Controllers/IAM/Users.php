@@ -12,13 +12,14 @@ class Users extends BaseController {
         $this->userModel = new UserModel();
     }
 
-    public function index() {
-        $data['users'] = $this->userModel->findAll();
-        return view('iam/users/index', $data);
+    public function usersInApp() {
+        $users = $this->userModel->getUsersForIAM();
+
+        return view('IAM/Users', ['users' => $users]);
     }
 
     public function create() {
-        return view('iam/users/create');
+        return view('IAM/create');
     }
 
     public function store() {
