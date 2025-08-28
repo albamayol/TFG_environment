@@ -35,8 +35,8 @@
     </div>
 
     <div class="form-group form-check">
-        <input type="checkbox" id="simulated" name="simulated" value="1" class="form-check-input">
         <label for="simulated" class="form-check-label">Simulated?</label>
+        <input type="checkbox" id="simulated" name="simulated" value="1" class="form-check-input">
     </div>
     
     <button type="submit" class="btn btn-primary">Create Action</button>
