@@ -12,7 +12,7 @@ class Users extends BaseController {
         $this->userModel = new UserModel();
     }
 
-    public function usersInApp() {
+    public function showUsers() {
         $users = $this->userModel->getUsersForIAM();
         $canDeleteUsers = (session('role_name') === 'Profile_Admin');
         return view('IAM/Users', ['users' => $users, 'canDeleteUsers' => $canDeleteUsers]);
@@ -81,12 +81,5 @@ class Users extends BaseController {
             'message' => 'User deleted successfully',
             'csrf'    => ['name' => csrf_token(), 'hash' => csrf_hash()],
         ]);
-    }
-
-     /**
-     * Determine if the current user can delete users.
-     */
-    private function canDeleteUser(int $userId): bool {
-        return $this->userModel->getRole($userId) === 'Profile_Admin' ?? false;
     }
 }

@@ -1,58 +1,51 @@
 <?php ?>
 <?= $this->extend('layouts/main') ?>
 <?= $this->section('content') ?>
-<div class="user-container">
-        <h1 style="color: #11306aff">Users</h1>
-        <table id="usersTable">
+    <div class="action-container">
+        <h1 style="color: #11306aff">Actions</h1>
+        <button type="button" class="btn-create-action" onclick="window.location.href='/IAM/Actions/createAction'">
+            Create Action
+        </button>
+        <table id="actionsTable">
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Surnames</th>
-                    <th>Email</th>
-                    <th>Role</th>
+                    <th>Description</th>
                 </tr>
             </thead>
             <tbody>
-            <?php if (empty($users)): ?>
+            <?php if (empty($actions)): ?>
                 <tr>
-                    <td colspan="4">No users defined.</td>
+                    <td colspan="2">No actions defined.</td>
                 </tr>
             <?php endif; ?>
-            <?php foreach ($users as $user): ?>
+            <?php foreach ($actions as $action): ?>
                 <tr>
-                    <td><?= esc ($user['name']) ?></td>
-                    <td><?= esc ($user['surnames']) ?></td>
-                    <td><?= esc ($user['email']) ?></td>
-                    <td class="role-label">
-                        <?php
-                            $role = $user['role'] ?? null;
-                            echo $roleLabels[$role] ?? esc ($role ?? '—');
-                        ?>
-                    </td> 
-                    <?php if ($canDeleteUsers): ?>
-                        <td>
-                            <button
-                                type="button"
-                                id="deleteTaskBtn"
-                                class="icon-btn icon-btn--trash js-delete-user"
-                                title="Delete User"
-                                aria-label="Delete User"
-                                data-id="<?= esc($user['id_user']) ?>"
-                                style="flex:0 0 auto"
-                                >
-                                <img src="/assets/media/icons/trash_bin.svg" alt="Delete" width="22" height="22" loading="eager" decoding="async">
-                            </button>
-                        </td>
-                    <?php endif; ?>
+                    <td><?= esc ($action['name']) ?></td>
+                    <td><?= esc ($action['description']) ?></td>
                 </tr>
-                
             <?php endforeach; ?>
             </tbody>
         </table>
-        </div>
+    </div>
 
     <style>
-        .user-container { 
+        .btn-create-action {
+            display: inline-block;
+            margin-bottom: 18px;
+            padding: 10px 18px;
+            background: #11306aff;
+            color: #fff;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-create-action:hover {
+            background: #1a418c;
+        }
+        .action-container { 
             max-width: 900px; 
             margin: 40px auto; 
             background: #fff; 
@@ -105,7 +98,5 @@
             });
         });
     </script>
-
-<script src="/assets/js/users.js"></script>
 
 <?= $this->endSection() ?>

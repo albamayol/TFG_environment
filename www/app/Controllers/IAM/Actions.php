@@ -12,27 +12,31 @@ class Actions extends BaseController {
         $this->actionModel = new ActionModel();
     }
 
-    public function index() {
-        $data['actions'] = $this->actionModel->findAll();
-        return view('iam/actions/index', $data);
+    public function showActions() {
+        $actions = $this->actionModel->findAll();
+        return view('IAM/Actions', ['actions' => $actions]);
     }
 
     public function create() {
-        return view('iam/actions/create');
+        return view('IAM/createAction');
     }
 
     public function store() {
-        if (! $this->validate([
-            'name' => 'required|min_length[3]'
-        ])) {
+        $rules = [
+            'action-name'  => 'required|min_length[3]',
+            'action-description' => 'required|min_length[3]'
+        ];
+
+        if (! $this->validate($rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        $this->actionModel->save([
-            'name'        => $this->request->getPost('name'),
-            'description' => $this->request->getPost('description')
+        $this->actionModel->insert([
+            'name'        => $this->request->getPost('action-name'),
+            'description' => $this->request->getPost('action-description'),
+            'simulated'   => $this->request->getPost('simulated') ? 1 : 0,
         ]);
 
-        return redirect()->to('/IAM/Actions')->with('message', 'Acción creada');
+        return redirect()->to('/IAM/Actions')->with('message', 'Action created successfully');
     }
 }

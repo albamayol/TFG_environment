@@ -32,16 +32,16 @@ $routes->group('/Projects', ['filter' => 'auth'], function($routes) {
 });
 
 $routes->group('/IAM', ['filter' => 'auth', 'role:Profile_Admin,Manager'], function($routes) {
-    $routes->get('Users', 'IAM\Users::usersInApp');
+    $routes->get('Users', 'IAM\Users::showUsers');
     $routes->get('Users/createUser', 'IAM\Users::create');
     $routes->post('Users/store', 'IAM\Users::store');
     $routes->post('Users/delete/(:num)', 'IAM\Users::deleteUser/$1');
 
-    $routes->get('Roles', 'IAM\Roles::index');
+    $routes->get('Roles', 'IAM\Roles::showRoles');
     $routes->get('Roles/createRole', 'IAM\Roles::create');
     $routes->post('Roles/store', 'IAM\Roles::store');
 
-    $routes->get('Actions', 'IAM\Actions::index');
+    $routes->get('Actions', 'IAM\Actions::showActions');
     $routes->get('Actions/createAction', 'IAM\Actions::create');
     $routes->post('Actions/store', 'IAM\Actions::store');
 });

@@ -12,9 +12,9 @@ class Roles extends BaseController {
         $this->roleModel = new RoleModel();
     }
 
-    public function index() {
-        $data['roles'] = $this->roleModel->findAll();
-        return view('iam/roles/index', $data);
+    public function showRoles() {
+        $roles = $this->roleModel->findAll();
+        return view('IAM/Roles', ['roles' => $roles]);
     }
 
     public function show($id) {
@@ -22,11 +22,11 @@ class Roles extends BaseController {
         if (! $role) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
-        return view('iam/roles/show', ['role' => $role]);
+        return view('IAM/Roles/showRoles', ['role' => $role]);
     }
 
     public function create() {
-        return view('iam/roles/create');
+        return view('IAM/Roles/createRole');
     }
 
     public function store() {
