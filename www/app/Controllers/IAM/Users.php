@@ -4,6 +4,14 @@ namespace App\Controllers\IAM;
 
 use App\Controllers\BaseController;
 use App\Models\UserModel;
+use App\Models\ProfileAdminModel;
+use App\Models\ManagerModel;
+use App\Models\HeadOfTeamModel;
+use App\Models\WorkerModel;
+
+use libphonenumber\PhoneNumberUtil;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\NumberParseException;
 
 class Users extends BaseController {
     protected $userModel;
@@ -15,31 +23,87 @@ class Users extends BaseController {
     public function showUsers() {
         $users = $this->userModel->getUsersForIAM();
         $canDeleteUsers = (session('role_name') === 'Profile_Admin');
-        return view('IAM/Users', ['users' => $users, 'canDeleteUsers' => $canDeleteUsers]);
+        $canCreateUsers = (session('role_name') === 'Profile_Admin');
+        return view('IAM/Users', ['users' => $users, 'canDeleteUsers' => $canDeleteUsers, 'canCreateUsers' => $canCreateUsers]);
     }
 
     public function create() {
-        return view('IAM/create');
+        return view('IAM/createUser');
     }
 
+    //store FUNCTIONALITY WILL ALLOW Profile Admins TO CREATE ACCOUNTS FOR OTHER USERS.
     public function store() {
-        if (! $this->validate([
-            'name'     => 'required',
-            'surnames' => 'required',
-            'email'    => 'required|valid_email|is_unique[Usuario.email]',
-            'password' => 'required|min_length[8]'
-        ])) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
-        }
+        helper(['form']);
 
-        $this->userModel->save([
+        //normalize BEFORE setting up $data
+        $rawTel = $this->request->getPost('telephone');
+        $tel = $this->normalize_phone_to_e164($rawTel, 'ES');
+        if ($tel === null) {
+            return redirect()->back()->withInput()
+                ->with('errors', ['telephone' => 'Invalid phone number. Use international format (+...).']);
+        }
+        
+        $data = [
             'name'     => $this->request->getPost('name'),
             'surnames' => $this->request->getPost('surnames'),
             'email'    => $this->request->getPost('email'),
-            'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT)
-        ]);
+            'password' => $this->request->getPost('password'),
+            'repeated_password' => $this->request->getPost('repeated_password'),
+            'birthdate' => $this->request->getPost('birthdate'),
+            'address'  => $this->request->getPost('address'),
+            'dni_nie'  => $this->request->getPost('dni_nie'),
+            'telephone' => $tel,
+            'soft_skills' => $this->request->getPost('soft_skills'),
+            'technical_skills' => $this->request->getPost('technical_skills'),
+            'simulated' => 0, // Default value for simulated
+            'Role' => $this->request->getPost('role') ?? 'Manager', // Default role is Manager
+        ];
 
-        return redirect()->to('/IAM/Users')->with('message', 'Usuario creado');
+        //Validate role
+        $validRoles = ['Profile_Admin', 'Manager', 'Head_Of_Team', 'Worker'];
+        $role = $this->request->getPost('role');
+
+        if (!in_array($role, $validRoles, true)) {
+            return redirect()->back()->withInput()->with('errors', ['role' => 'Invalid role selected.']);
+        }
+
+        // Validate ALL fields using model validation
+        if (! $this->userModel->validate($data)) {
+            return redirect()->back()->withInput()->with('errors', $this->userModel->errors());
+        }
+        
+        // insert will run the model’s validationRules and validationMessages
+        if ($this->userModel->insert($data)) {
+            
+            switch($data['Role']) {
+                case 'Profile_Admin':
+                    $profileAdminModel = new ProfileAdminModel();
+                    $profileAdminModel->insert(['id_prof_admin' => $this->userModel->insertID()]);
+                    break;
+                case 'Manager':
+                    $managerModel = new ManagerModel();
+                    $managerModel->insert(['id_manager' => $this->userModel->insertID()]);
+                    break;
+                case 'Head_Of_Team':
+                    $headOfTeamModel = new HeadOfTeamModel();
+                    $headOfTeamModel->insert(['id_head_of_team' => $this->userModel->insertID()]);
+                    break;
+                case 'Worker':
+                    $workerModel = new WorkerModel();
+                    $workerModel->insert(['id_worker' => $this->userModel->insertID()]);
+                    break;
+                default:
+                    // If an unknown role is provided, delete the created user and return an error
+                    $this->userModel->delete($this->userModel->insertID());
+                    return redirect()->back()->withInput()
+                        ->with('errors', ['role' => 'Invalid role specified.']);
+            }
+
+            // success: redirect to login with flash message
+            return redirect()->to('IAM/Users')->with('message', 'User registered successfully');
+        } else { // failure: redirect back with the errors array from the model
+            return redirect()->back()->withInput()->with('errors', $this->userModel->errors()); 
+        }
     }
 
     public function deleteUser($id = null) {
@@ -81,5 +145,23 @@ class Users extends BaseController {
             'message' => 'User deleted successfully',
             'csrf'    => ['name' => csrf_token(), 'hash' => csrf_hash()],
         ]);
+    }
+
+    /**
+     * Normaliza un teléfono “amigable” a E.164 (+XXXXXXXXXXX).
+     * Devuelve null si no es válido.
+     */
+    function normalize_phone_to_e164(string $input, string $defaultRegion = 'ES'): ?string
+    {
+        $util = PhoneNumberUtil::getInstance();
+        try {
+            $proto = $util->parse($input, $defaultRegion); // acepta +, espacios, guiones, paréntesis...
+            if (!$util->isValidNumber($proto)) {
+                return null;
+            }
+            return $util->format($proto, PhoneNumberFormat::E164); // p.ej. +34600123456
+        } catch (NumberParseException $e) {
+            return null;
+        }
     }
 }

@@ -3,6 +3,11 @@
 <?= $this->section('content') ?>
 <div class="user-container">
         <h1 style="color: #11306aff">Users</h1>
+        <?php if ($canCreateUsers): ?>
+            <button type="button" class="btn-create-user" onclick="window.location.href='/IAM/Users/createUser'">
+                Create User
+            </button>
+        <?php endif; ?>
         <table id="usersTable">
             <thead>
                 <tr>
@@ -52,6 +57,21 @@
         </div>
 
     <style>
+        .btn-create-user {
+                display: inline-block;
+                margin-bottom: 18px;
+                padding: 10px 18px;
+                background: #11306aff;
+                color: #fff;
+                border-radius: 6px;
+                border: none;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background 0.2s;
+            }
+        .btn-create-user:hover {
+            background: #1a418c;
+        }
         .user-container { 
             max-width: 900px; 
             margin: 40px auto; 

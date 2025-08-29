@@ -65,6 +65,7 @@ class UserModel extends Model {
         'telephone' => 'required|check_phone_number', 
         'soft_skills' => 'permit_empty',
         'technical_skills' => 'permit_empty',
+        'Role' => 'required|in_list[Profile_Admin,Manager,Head_Of_Team,Worker]', // Only for IAM user creation
     ];
 
     protected $validationMessages = [
@@ -112,7 +113,11 @@ class UserModel extends Model {
         ],
         'technical_skills' => [
             'permit_empty' => 'Technical Skills can be left empty.',
-        ]
+        ],
+        'Role' => [
+            'required' => 'The Role field is required.',
+            'in_list'  => 'The Role must be one of: Profile Admin, Manager, Head Of Team, Worker.',
+        ],
     ];    
     protected $skipValidation     = false;
 
@@ -148,7 +153,7 @@ class UserModel extends Model {
         $userToDeleteRole = $this->getRole($userId);
         switch ($userToDeleteRole) {
             case 'Profile_Admin':
-                $this->profileAdminModel->where('id_profile_admin', $userId)->delete();
+                $this->profileAdminModel->where('id_prof_admin', $userId)->delete();
                 break;
             case 'Manager':
                 $this->managerModel->where('id_manager', $userId)->delete();

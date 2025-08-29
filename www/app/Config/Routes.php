@@ -33,9 +33,9 @@ $routes->group('/Projects', ['filter' => 'auth'], function($routes) {
 
 $routes->group('/IAM', ['filter' => 'auth', 'role:Profile_Admin,Manager'], function($routes) {
     $routes->get('Users', 'IAM\Users::showUsers');
-    $routes->get('Users/createUser', 'IAM\Users::create');
-    $routes->post('Users/store', 'IAM\Users::store');
-    $routes->post('Users/delete/(:num)', 'IAM\Users::deleteUser/$1');
+    $routes->get('Users/createUser', 'IAM\Users::create', ['filter' => 'role:Profile_Admin']);
+    $routes->post('Users/store', 'IAM\Users::store', ['filter' => 'role:Profile_Admin']);
+    $routes->post('Users/delete/(:num)', 'IAM\Users::deleteUser/$1', ['filter' => 'role:Profile_Admin']);
 
     $routes->get('Roles', 'IAM\Roles::showRoles');
     $routes->get('Roles/createRole', 'IAM\Roles::create');
