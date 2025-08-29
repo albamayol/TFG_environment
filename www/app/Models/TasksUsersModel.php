@@ -70,7 +70,7 @@ class TasksUsersModel extends Model {
 
         if ($isAdmin || $isManager) {
             return $db->table('Usuario')
-                ->select('id_user, name, surnames')
+                ->select('id_user, name, email, surnames')
                 ->get()
                 ->getResultArray();
         }
@@ -79,7 +79,7 @@ class TasksUsersModel extends Model {
         $isHead = $db->table('Head_of_Team')->where('id_head_of_team', $currentUserId)->countAllResults() > 0;
         if ($isHead) {
             return $db->table('user_project_role')
-                ->select('Usuario.id_user, Usuario.name, Usuario.surnames')
+                ->select('Usuario.id_user, Usuario.name, Usuario.email, Usuario.surnames')
                 ->join('Usuario', 'Usuario.id_user = user_project_role.id_user')
                 ->where('user_project_role.id_user !=', $currentUserId) // exclude self if desired
                 ->whereIn('user_project_role.id_project', function ($builder) use ($currentUserId) {
@@ -94,7 +94,7 @@ class TasksUsersModel extends Model {
 
         // Default: return only the current user (for individual tasks)
         return $db->table('Usuario')
-            ->select('id_user, name, surnames')
+            ->select('id_user, emailname, surnames')
             ->where('id_user', $currentUserId)
             ->get()
             ->getResultArray();

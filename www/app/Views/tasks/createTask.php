@@ -80,7 +80,7 @@
             <option value="">-- Select User --</option>
             <?php foreach ($users as $user): ?>
                 <option value="<?= esc($user['id_user']) ?>">
-                    <?= esc($user['name']) ?> <?= esc($user['surnames']) ?>
+                    <?= esc($user['email']) ?>
                 </option>
             <?php endforeach; ?>
         </select>
