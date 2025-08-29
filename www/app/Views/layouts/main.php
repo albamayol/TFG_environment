@@ -53,6 +53,9 @@ document.addEventListener('DOMContentLoaded', function () {
 <body>
     <?php if (session()->get('logged_in')): ?>
         <nav>
+            <a href="/Tasks/MyDay">My Day</a>
+            <a href="/Tasks/MyTasks">My Tasks</a>
+            <a href="/Projects/MyProjects">My Projects</a>
             <?php if (session()->get('role_name') === 'Profile_Admin' || session()->get('role_name') === 'Manager'): ?>
               <details class="iam-details">
                 <summary class="iam-link">IAM</summary>
@@ -60,11 +63,8 @@ document.addEventListener('DOMContentLoaded', function () {
                   <a href="/IAM/Roles">Roles</a>
                   <a href="/IAM/Actions">Actions</a>
             </details>
-            <?php endif; ?>
-            <a href="/Tasks/MyDay">My Day</a>
-            <a href="/Tasks/MyTasks">My Tasks</a>
-            <a href="/Projects/MyProjects">My Projects</a>
             <a href="/logout">Log Out</a>
+            <?php endif; ?>
         </nav>
     <?php endif; ?>
     <?php if (session()->getFlashdata('message')): ?>
