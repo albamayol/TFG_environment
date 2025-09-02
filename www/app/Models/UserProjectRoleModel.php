@@ -16,14 +16,6 @@ class UserProjectRoleModel extends Model {
         ]);
     }
 
-    public function removeRole(int $userId, int $roleId, int $projectId) {
-        return $this->where([
-            'id_user'    => $userId,
-            'id_role'    => $roleId,
-            'id_project' => $projectId,
-        ])->delete();
-    }
-
     public function getRolesOfProjectByUser(int $userId, int $projectId) {
         return $this->where([
             'id_user'    => $userId,
@@ -40,16 +32,5 @@ class UserProjectRoleModel extends Model {
 
     public function getUsersByProject(int $projectId) {
         return $this->where('id_project', $projectId)->findAll();
-    }
-    
-    public function assignRole() {
-        $uprModel = new UserProjectRoleModel();
-        $uprModel->save([
-            'id_user'    => $this->request->getPost('id_user'),
-            'id_role'    => $this->request->getPost('id_role'),
-            'id_project' => $this->request->getPost('id_project'),
-        ]);
-
-        return redirect()->back()->with('message', 'Rol asignado correctamente');
     }
 }

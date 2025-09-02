@@ -2,17 +2,22 @@
 
 namespace App\Controllers;
 
-use App\Models\HeadOfTeamModel;
 use App\Models\ManagerModel;
-use App\Models\ProfileAdminModel;
 use App\Models\UserModel;
-use App\Models\WorkerModel;
 
 use libphonenumber\PhoneNumberUtil;
 use libphonenumber\PhoneNumberFormat;
 use libphonenumber\NumberParseException;
 
 class Auth extends BaseController {
+    protected $userModel;
+    protected $managerModel;
+
+    public function __construct() {
+        $this->userModel = new UserModel();
+        $this->managerModel = new ManagerModel();
+    }
+
     public function login() {
         if (session()->get('id_user')) {
             return redirect()->to('/Tasks/MyDay');
@@ -28,9 +33,7 @@ class Auth extends BaseController {
     //REGISTER FUNCTIONALITY WILL ALLOW TO HAVE AN ACCOUNT FOR THE APP TO BE USED FOR PERSONAL MOTIVES.
     public function register() {
         helper(['form']);
-        $userModel = new UserModel();
-        $managerModel = new ManagerModel(); //Default role for new users
-
+       
         //normalize BEFORE setting up $data
         $rawTel = $this->request->getPost('telephone');
         $tel = $this->normalize_phone_to_e164($rawTel, 'ES');
@@ -52,19 +55,20 @@ class Auth extends BaseController {
             'soft_skills' => $this->request->getPost('soft_skills'),
             'technical_skills' => $this->request->getPost('technical_skills'),
             'simulated' => 0, // Default value for simulated
+            'Role' => 'Manager', // Default role is Manager
         ];
         
         // insert will run the model’s validationRules and validationMessages
-        if ($userModel->insert($data)) {
+        if ($this->userModel->insert($data)) {
             
             // Grab the auto‑generated id_user
-            $newUserId = $userModel->insertID();
-            $managerModel->insert(['id_manager' => $newUserId]);
+            $newUserId = $this->userModel->insertID();
+            $this->managerModel->insert(['id_manager' => $newUserId]);
 
             // success: redirect to login with flash message
             return redirect()->to('/')->with('message', 'User registered successfully');
         } else { // failure: redirect back with the errors array from the model
-            return redirect()->back()->withInput()->with('errors', $userModel->errors()); 
+            return redirect()->back()->withInput()->with('errors', $this->userModel->errors());
         }
     }
 
@@ -84,8 +88,7 @@ class Auth extends BaseController {
                 : redirect()->back()->with('error', 'Email and password are required');
         }
 
-        $userModel = new UserModel();
-        $user = $userModel->findByEmail($email);
+        $user = $this->userModel->findByEmail($email);
 
         if (!$user || empty($user['password'])) {
             return $isAjax
@@ -100,7 +103,7 @@ class Auth extends BaseController {
         }
 
         // Get the user's role
-        $role = $userModel->getRole($user['id_user']);
+        $role = $this->userModel->getRole($user['id_user']);
         $user['role_name'] = $role;
 
         $session = session();
@@ -123,14 +126,12 @@ class Auth extends BaseController {
         return redirect()->to('/Tasks/MyDay');
     }
 
-    public function logout()
-    {
+    public function logout() {
         session()->destroy();
         return redirect()->to('/')->with('msg', 'Logged out.');
     }
 
-    private function jsonLoginError(string $message)
-    {
+    private function jsonLoginError(string $message) {
         $csrf = [
             'name' => csrf_token(),
             'hash' => csrf_hash(),
@@ -144,8 +145,7 @@ class Auth extends BaseController {
      * Normaliza un teléfono “amigable” a E.164 (+XXXXXXXXXXX).
      * Devuelve null si no es válido.
      */
-    function normalize_phone_to_e164(string $input, string $defaultRegion = 'ES'): ?string
-    {
+    private function normalize_phone_to_e164(string $input, string $defaultRegion = 'ES'): ?string {
         $util = PhoneNumberUtil::getInstance();
         try {
             $proto = $util->parse($input, $defaultRegion); // acepta +, espacios, guiones, paréntesis...

@@ -151,8 +151,7 @@ class Users extends BaseController {
      * Normaliza un teléfono “amigable” a E.164 (+XXXXXXXXXXX).
      * Devuelve null si no es válido.
      */
-    function normalize_phone_to_e164(string $input, string $defaultRegion = 'ES'): ?string
-    {
+    private function normalize_phone_to_e164(string $input, string $defaultRegion = 'ES'): ?string {
         $util = PhoneNumberUtil::getInstance();
         try {
             $proto = $util->parse($input, $defaultRegion); // acepta +, espacios, guiones, paréntesis...

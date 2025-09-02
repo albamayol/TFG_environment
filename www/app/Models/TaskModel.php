@@ -26,7 +26,7 @@ class TaskModel extends Model {
     }
 
     private function applyOrdering($builder) {
-        // Priority order: Urgent (1), High (2), Medium (3), Low (4), others (5)
+        //Priority order: Urgent (1), High (2), Medium (3), Low (4), others (5)
         $priorityCase = "(CASE Task.priority
                             WHEN 'Urgent' THEN 1
                             WHEN 'High'   THEN 2
@@ -35,7 +35,7 @@ class TaskModel extends Model {
                             ELSE 5
                         END)";
 
-        // Order by priority asc, then earliest due date asc (NULLs last), then duration asc
+        //Order by priority asc, then earliest due date asc (NULLs last), then duration asc
         $builder->orderBy($priorityCase, 'ASC', false);
         $builder->orderBy('(Task.limit_date IS NULL)', 'ASC', false);
         $builder->orderBy('Task.limit_date', 'ASC');
