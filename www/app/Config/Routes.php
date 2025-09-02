@@ -19,7 +19,6 @@ $routes->group('/Tasks', ['filter' => 'auth'], function($routes) {
     $routes->get('MyTasks', 'Tasks::myTasks');  // any logged-in user
     $routes->get('createTask', 'Tasks::create', ['filter' => 'role:Profile_Admin,Manager,Head_Of_Team']);
     $routes->post('store', 'Tasks::save', ['filter' => 'role:Profile_Admin,Manager,Head_Of_Team']);
-    $routes->get('(:num)', 'Tasks::show/$1');   // any logged-in user (ownership check in controller)
     $routes->post('updateState/(:num)', 'Tasks::updateState/$1'); // any logged-in user (ownership check in controller)
     $routes->post('delete/(:num)', 'Tasks::delete/$1');  
 });

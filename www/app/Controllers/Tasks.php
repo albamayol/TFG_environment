@@ -98,14 +98,6 @@ class Tasks extends BaseController {
         return view('/Tasks/MyTasks', $data);
     }
 
-    public function show($id) {
-        $task = $this->taskModel->find($id);
-        if (!$task) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
-        }
-        return view('/Tasks/show', ['task' => $task]);
-    }
-
      /**
      * Show the "Create Task" form to privileged users.
      */
