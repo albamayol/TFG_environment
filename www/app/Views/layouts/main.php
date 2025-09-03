@@ -63,8 +63,8 @@ document.addEventListener('DOMContentLoaded', function () {
                   <a href="/IAM/Roles">Roles</a>
                   <a href="/IAM/Actions">Actions</a>
             </details>
-            <a href="/logout">Log Out</a>
             <?php endif; ?>
+            <a href="/Profile">Profile</a>
         </nav>
     <?php endif; ?>
     <?php if (session()->getFlashdata('message')): ?>

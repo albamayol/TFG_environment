@@ -14,6 +14,8 @@ $routes->get('/logout', 'Auth::logout');
 $routes->get('/signup', 'Auth::signup');
 $routes->post('/signup', 'Auth::register');
 
+$routes->get('/Profile', 'Profile::show', ['filter' => 'auth']);
+
 $routes->group('/Tasks', ['filter' => 'auth'], function($routes) {
     $routes->get('MyDay', 'Tasks::myDay');      //any logged-in user
     $routes->get('MyTasks', 'Tasks::myTasks');  // any logged-in user

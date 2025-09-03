@@ -11,10 +11,20 @@ class Profile extends BaseController {
         $this->userModel = new UserModel();
     }
 
-    public function index() {
-        $userId = session()->get('id_user');
+    public function show() {  
+
+        $userId = (int)(session('id_user') ?? 0);
+        if ($userId <= 0) {
+            return $this->response->setStatusCode(401)->setJSON([
+                'ok' => false,
+                'error' => 'Not authenticated',
+                'csrf'  => ['name' => csrf_token(), 'hash' => csrf_hash()],
+            ]);
+        }
         $user   = $this->userModel->find($userId);
-        return view('profile/index', ['user' => $user]);
+        $user['role_name'] = session('role_name');
+        
+        return view('Profile/userProfile', ['user' => $user]);
     }
 
     public function update() {
