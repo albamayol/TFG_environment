@@ -10,18 +10,20 @@
             <thead>
                 <tr>
                     <th>Name</th>
+                    <th>Description</th>
                     <th>Skills</th>
                 </tr>
             </thead>
             <tbody>
             <?php if (empty($roles)): ?>
                 <tr>
-                    <td colspan="2">No roles defined.</td>
+                    <td colspan="3">No roles defined.</td>
                 </tr>
             <?php endif; ?>
             <?php foreach ($roles as $role): ?>
                 <tr>
                     <td><?= esc ($role['name']) ?></td>
+                    <td><?= esc ($role['description']) ?></td>
                     <td><?= esc ($role['skills']) ?></td>
                 </tr>
             <?php endforeach; ?>
@@ -76,7 +78,6 @@
     </style>
 
     <script>
-        // Example: simple search/filter functionality
         // Add an input box above the table for searching by name/email
         document.addEventListener('DOMContentLoaded', function() {
             const container = document.querySelector('.container');

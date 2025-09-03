@@ -72,6 +72,10 @@
         </ul>
       </div>
     <?php endif ?>
+    
+    <button type="button" class="btn btn-back" onclick="window.location.href='<?= site_url('/') ?>'">
+      Back
+    </button>
 
     <form method="post" action="/signup" novalidate>
       <?= csrf_field() ?>

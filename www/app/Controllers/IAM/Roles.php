@@ -23,14 +23,6 @@ class Roles extends BaseController {
         return view('IAM/Roles', ['roles' => $roles]);
     }
 
-    public function show($id) {
-        $role = $this->roleModel->find($id);
-        if (! $role) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
-        }
-        return view('IAM/showRoles', ['role' => $role]);
-    }
-
     public function create() {
         return view('IAM/createRole', [
             'actions' => $this->actionModel->findAll()

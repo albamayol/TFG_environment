@@ -95,6 +95,21 @@ details.iam-details > a:last-child {
     border-bottom: none;
 }
 
+.btn-back {
+  background: #e5e7eb;
+  color: #11306aff;
+  border-radius: 6px;
+  border: none;
+  padding: 10px 18px;
+  margin-right: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  }
+.btn-back:hover {
+    background: #d1d5db;
+}
+
 .auth-page{
   min-height: calc(100dvh - 80px);
   display:grid;

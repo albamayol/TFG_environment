@@ -26,6 +26,10 @@
     </div>
 <?php endif; ?>
 
+<button type="button" class="btn btn-back" onclick="window.location.href='<?= site_url('/Tasks/MyDay') ?>'">
+    Back
+</button>
+
 <form action="<?= site_url('/Tasks/store') ?>" method="post" id="createTaskForm">
     <?= csrf_field() ?>
 

@@ -20,6 +20,9 @@
         </ul>
     </div>
 <?php endif; ?>
+<button type="button" class="btn btn-back" onclick="window.location.href='<?= site_url('/IAM/Roles') ?>'">
+    Back
+</button>
 
 <form action="<?= site_url('/IAM/Roles/store') ?>" method="post" id="createRoleForm">
     <?= csrf_field() ?>

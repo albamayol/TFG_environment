@@ -21,6 +21,10 @@
     </div>
 <?php endif; ?>
 
+<button type="button" class="btn btn-back" onclick="window.location.href='<?= site_url('/IAM/Actions') ?>'">
+    Back
+</button>
+
 <form action="<?= site_url('/IAM/Actions/store') ?>" method="post" id="createActionForm">
     <?= csrf_field() ?>
 
