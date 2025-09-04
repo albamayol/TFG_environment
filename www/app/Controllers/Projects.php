@@ -3,17 +3,35 @@
 namespace App\Controllers;
 
 use App\Models\ProjectModel;
+use App\Models\UserProjectRoleModel;
+use App\Models\TaskModel;
 
 class Projects extends BaseController {
     protected $projectModel;
+    protected $userProjectRoleModel;
+    protected $taskModel;
 
     public function __construct() {
         $this->projectModel = new ProjectModel();
+        $this->userProjectRoleModel = new UserProjectRoleModel();
+        $this->taskModel = new TaskModel();
     }
 
-    public function index() {
-        $data['projects'] = $this->projectModel->findAll();
-        return view('projects/myProjects', $data);
+    public function showMyProjects() {
+        $userId = session('id_user');
+        if ($userId <= 0) {
+            return $this->response->setStatusCode(401)->setJSON([
+                'ok' => false,
+                'error' => 'Not authenticated',
+                'csrf'  => ['name' => csrf_token(), 'hash' => csrf_hash()],
+            ]);
+        }
+
+        $projects = [
+            'projects' => $this->projectModel->getProjectsForUser($userId),
+            'canCreateProject' => in_array(session('role_name'), ['Profile_Admin', 'Manager'])
+        ];
+        return view('projects/myProjects', $projects);
     }
 
     public function show($id) {

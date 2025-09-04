@@ -4,33 +4,28 @@
     <h1>My Projects</h1>
 
     <div class="projects-container">
-        <!-- Example project cards. Replace with PHP loop for dynamic content. -->
-        <div class="project-card">
-            <div class="project-name">Project Alpha</div>
-            <div class="project-description">A web application for managing tasks efficiently.</div>
-            <div class="project-end-date">End Date: 2024-09-30</div>
-        </div>
-        <div class="project-card">
-            <div class="project-name">Project Beta</div>
-            <div class="project-description">Mobile app for tracking fitness activities.</div>
-            <div class="project-end-date">End Date: 2024-12-15</div>
-        </div>
-        <div class="project-card">
-            <div class="project-name">Project Beta</div>
-            <div class="project-description">Mobile app for tracking fitness activities.</div>
-            <div class="project-end-date">End Date: 2024-12-15</div>
-        </div>
-        <div class="project-card">
-            <div class="project-name">Project Beta</div>
-            <div class="project-description">Mobile app for tracking fitness activities.</div>
-            <div class="project-end-date">End Date: 2024-12-15</div>
-        </div>
-        <div class="project-card">
-            <div class="project-name">Project Beta</div>
-            <div class="project-description">Mobile app for tracking fitness activities.</div>
-            <div class="project-end-date">End Date: 2024-12-15</div>
-        </div>
-        <!-- End example cards -->
+        <?php if (!empty($projects)): ?>
+            <?php foreach ($projects as $project): ?>
+                <div class="project-card">
+                    <div class="project-name"><?= esc($project['name']) ?></div>
+                    <div class="project-description"><?= esc($project['description']) ?></div>
+                    <div class="project-state"><strong>State:</strong> <?= esc($project['state']) ?></div>
+                    <div class="project-dates">
+                        <span><strong>Start Date:</strong> <?= esc($project['start_date']) ?></span><br>
+                        <span><strong>End Date:</strong> <?= esc($project['end_date']) ?></span>
+                    </div>
+                    <div class="project-simulated">
+                        <strong>Simulated:</strong>
+                        <?= !empty($project['simulated']) ? '<span style="color:#1a418c;">Yes</span>' : '<span style="color:#b02a37;">No</span>' ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <div>All quiet here...</div>
+        <?php endif; ?>
+        <?php if ($canCreateProject): ?> 
+            <a href="<?= site_url('/Projects/createProject') ?>" class="btn btn-success mb-3">Create Project</a>
+        <?php endif; ?>
     </div>
 
     <style>

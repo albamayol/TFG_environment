@@ -26,7 +26,7 @@ $routes->group('/Tasks', ['filter' => 'auth'], function($routes) {
 });
 
 $routes->group('/Projects', ['filter' => 'auth'], function($routes) {
-    $routes->get('MyProjects', 'Projects::index');
+    $routes->get('MyProjects', 'Projects::showMyProjects');
     $routes->get('createProject', 'Projects::create');
     $routes->post('store', 'Projects::save');
     $routes->get('MyProjects/(:num)', 'Projects::show/$1');

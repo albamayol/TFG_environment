@@ -40,23 +40,12 @@ class ProjectModel extends Model {
     }
     
     /**
-     * Get projects for a user:
-     * - If the user is a head of team, return only projects they participate in.
-     * - Otherwise, return all projects.
+     * Get projects for a user
+     * 
      */
-    public function getProjectsForUser(int $userId): array
-    {
-        $db = \Config\Database::connect();
-        // Check if the user is a head of team
-        $isHead = $db->table('Head_of_Team')->where('id_head_of_team', $userId)->countAllResults() > 0;
-
-        if (! $isHead) {
-            return $this->findAll();
-        }
-
-        // For head of team, join the user_project_role table
+    public function getProjectsForUser(int $userId): array {
         return $this->select('Project.*')
-            ->join('user_project_role', 'Project.id_project = user_project_role.id_project')
+            ->join('user_project_role', 'Project.id_project = user_project_role.id_project', 'inner')
             ->where('user_project_role.id_user', $userId)
             ->groupBy('Project.id_project')
             ->findAll();
