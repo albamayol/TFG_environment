@@ -1,4 +1,4 @@
-(function initTaskModal() {
+(function initProjectModal() {
 
   function csrf() {
     const name = document.querySelector('meta[name="csrf-token-name"]')?.content;
@@ -14,15 +14,15 @@
     }
   }
 
-  const ICON_TRASH = document.querySelector('meta[name="assets-url"]')?.content + '/media/icons/trash_bin.svg';
+  //const ICON_TRASH = document.querySelector('meta[name="assets-url"]')?.content + '/media/icons/trash_bin.svg';
 
-  const modal = document.getElementById('taskModal');
+  const modal = document.getElementById('projectModal');
   if (!modal) return;
 
   if (modal.parentNode !== document.body) document.body.appendChild(modal);
 
   const closeBtn   = document.getElementById('closeModalBtn');
-  const bodyHost   = document.getElementById('taskModalBody');
+  const bodyHost   = document.getElementById('projectModalBody');
   const closeModal = () => { modal.style.display = 'none'; document.body.style.overflow = ''; };
 
   if (closeBtn) closeBtn.addEventListener('click', closeModal);
@@ -34,7 +34,7 @@
   document.addEventListener('click',     (e) => { if (e.target.closest('.state-select')) e.stopPropagation(); }, { capture:true });
 
   document.addEventListener('click', (e) => {
-    const card = e.target.closest('.task-card');
+    const card = e.target.closest('.project-card');
     if (!card || e.target.closest('.state-select')) return;
 
     // Build modal HTML from the card’s dataset
@@ -44,11 +44,11 @@
       ${canDelete ? `
         <button
           type="button"
-          id="deleteTaskBtn"
+          id="deleteProjectBtn"
           class="icon-btn icon-btn--trash"
-          title="Delete task"
-          aria-label="Delete task"
-          data-id="${escapeHtml(card.dataset.taskId)}"
+          title="Delete project"
+          aria-label="Delete project"
+          data-id="${escapeHtml(card.dataset.projectId)}"
           style="flex:0 0 auto"
         >
           <!-- trash icon SVG -->
@@ -56,13 +56,9 @@
         </button>
       ` : ''}
       ${escapeHtml(card.dataset.description || '') ? `<p>${escapeHtml(card.dataset.description)}</p>` : ''}
-      <p><strong>Duration:</strong> ${escapeHtml(card.dataset.duration || '-')}</p>
-      <p><strong>Priority:</strong> ${escapeHtml(card.dataset.priority || '-')}</p>
-      <p><strong>Limit date:</strong> ${escapeHtml(card.dataset.limitDate || '-')}</p>
-      <p><strong>State:</strong> ${escapeHtml(card.dataset.state || '-')}</p>
-      <p><strong>Person of interest:</strong> ${escapeHtml(card.dataset.person || '-')}</p>
-      <p><strong>Origin:</strong> ${escapeHtml(card.dataset.origin || '-')}</p>
-      
+      <p><strong>Start Date:</strong> ${escapeHtml(card.dataset.startDate || '-')}</p>
+      <p><strong>End Date:</strong> ${escapeHtml(card.dataset.endDate || '-')}</p>
+      <p><strong>State:</strong> ${escapeHtml(card.dataset.state || '-')}</p>      
     `;
     bodyHost.innerHTML = html;
 
@@ -79,7 +75,7 @@
     const newState = select.value;
     const prev = select.dataset.state || select.value;
 
-    fetch(`/Tasks/updateState/${id}`, {
+    fetch(`/Projects/updateState/${id}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'same-origin', 
@@ -93,19 +89,19 @@
       updateCsrfFromResponse(json);           // <—— CRITICAL LINE
 
       // keep existing badge update, but DON'T overwrite className:
-      const card = select.closest('.task-card');
+      const card = select.closest('.project-card');
       if (card) {
-        const badge = card.querySelector('.state-badge') || card.querySelector('.task-header .badge');
+        const badge = card.querySelector('.state-badge') || card.querySelector('.project-card-header .badge') || card.querySelector('.badge');
         if (badge) {
           const newClass = 'badge-' + newState.toLowerCase().replace(/\s+/g, '-');
-          ['badge-to-do','badge-in-progress','badge-done'].forEach(c => badge.classList.remove(c));
+          ['badge-to-begin','badge-active','badge-on-pause','badge-finished'].forEach(c => badge.classList.remove(c));
           badge.classList.add('badge', 'state-badge', newClass);
           badge.textContent = newState;
         }
         card.dataset.state = newState;
       }
       select.dataset.state = newState;
-      recalcCompletionPct();
+      //recalcCompletionPct();
     })
     .catch(() => {
       select.value = prev;
@@ -113,7 +109,7 @@
   });
 
   //handler for delete
-  document.addEventListener('click', (e) => {
+  /*document.addEventListener('click', (e) => {
     const btn = e.target.closest('button#deleteTaskBtn');
     if (!btn) return;
 
@@ -141,7 +137,7 @@
       }
     })
     .catch(() => alert('Delete failed'));
-  });
+  });*/
 
 
   //to avoid XSS when injecting dataset values
@@ -154,7 +150,7 @@
       .replaceAll("'",'&#39;');
   }
 
-  function recalcCompletionPct() {
+  /*function recalcCompletionPct() {
     const pctNode = document.getElementById('completionPct');
     if (!pctNode) return; //Not on My Day
 
@@ -172,6 +168,6 @@
     });
 
     pctNode.textContent = Math.round((done / total) * 100);
-  }
+  }*/
 
 })();

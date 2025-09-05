@@ -149,6 +149,30 @@ class UserModel extends Model {
         return null;
     }
 
+    public function getAllHeadsOfTeam(): array {
+        $hotIDs = $this->headOfTeamModel->findAll(); 
+        foreach ($hotIDs as &$hot) {
+            $hots = $this->where('id_user', $hot['id_head_of_team'])->findAll();
+        }
+        return $hots;
+    }
+
+    public function getAllWorkers(): array {
+        $workerIDs = $this->workerModel->findAll(); 
+        foreach ($workerIDs as &$worker) {
+            $workers = $this->where('id_user', $worker['id_worker'])->findAll();
+        }
+        return $workers;
+    }
+
+    public function getAllManagers(): array {
+        $managerIDs = $this->managerModel->findAll(); 
+        foreach ($managerIDs as &$manager) {
+            $managers = $this->where('id_user', $manager['id_manager'])->findAll();
+        }
+        return $managers;
+    }
+
     public function deleteUser(int $userId): bool {
         $userToDeleteRole = $this->getRole($userId);
         switch ($userToDeleteRole) {

@@ -27,9 +27,9 @@ $routes->group('/Tasks', ['filter' => 'auth'], function($routes) {
 
 $routes->group('/Projects', ['filter' => 'auth'], function($routes) {
     $routes->get('MyProjects', 'Projects::showMyProjects');
-    $routes->get('createProject', 'Projects::create');
-    $routes->post('store', 'Projects::save');
-    $routes->get('MyProjects/(:num)', 'Projects::show/$1');
+    $routes->get('createProject', 'Projects::create', ['filter' => 'role:Profile_Admin,Manager']);
+    $routes->post('store', 'Projects::save', ['filter' => 'role:Profile_Admin,Manager']);
+    $routes->post('updateState/(:num)', 'Projects::updateState/$1');
 });
 
 $routes->group('/IAM', ['filter' => 'auth', 'role:Profile_Admin,Manager'], function($routes) {

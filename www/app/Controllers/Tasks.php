@@ -195,7 +195,7 @@ class Tasks extends BaseController {
             'limit_date'      => $limitDateUtc,
             'duration'        => $duration,
             'origin_of_task'  => $origin,
-            'person_of_interest' => $userEmail, // store current user
+            'person_of_interest' => $userEmail, //current user
             'simulated'       => $simulated,
         ];
 

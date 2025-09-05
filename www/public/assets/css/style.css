@@ -270,6 +270,11 @@ details.iam-details > a:last-child {
 .badge-in-progress  { background-color: #f1c40f; color:#222; }
 .badge-done         { background-color: #2ecc71; }
 
+.badge-to-begin     { background-color: #95a5a6; }
+.badge-active       { background-color: #fae155; color:#222; }
+.badge-on-pause     { background-color: #cc822e; }
+.badge-finished     { background-color: #2ecc71; }
+
 /* Priorities */
 .badge-low          { background-color: #3498db; }
 .badge-medium       { background-color: #9b59b6; }
@@ -311,9 +316,6 @@ details.iam-details > a:last-child {
 }
 /* If the last thing in the header is a badge, push it right */
 .task-card .task-header .badge:last-child { margin-left: auto; }
-
-/* Modal body is white too */
-/*.modal-content { color: #240808; }*/
 
 /* === Shared modal styles === */
 .modal{
@@ -397,4 +399,23 @@ details.iam-details > a:last-child {
 .state-select {
   margin-top:8px; width:100%; padding:8px 10px; border-radius:8px;
   border:1px solid #ccc; background: #fff; color: #222; font-size: .95rem;
+}
+
+/* Projects */
+.project-card {
+  background: #fff;
+  color: #222;                    
+  border: 1px solid #e0e4e8;
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.06);
+  padding: 20px;
+}
+.project-card p, .project-card strong, .project-card .project-name, .project-card .project-description, .project-card .project-dates, .project-card .project-dates strong {
+  color: #222;
+}
+.project-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
 }

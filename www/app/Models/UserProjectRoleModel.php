@@ -10,10 +10,12 @@ class UserProjectRoleModel extends Model {
     protected $allowedFields = ['id_user', 'id_role', 'id_project'];
 
     protected $returnType = 'array';
+    protected $useAutoIncrement = true;
 
     protected $projectModel;
 
     public function __construct() {
+        parent::__construct();
         $this->projectModel = new ProjectModel();
     }
 

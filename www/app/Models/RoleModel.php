@@ -38,6 +38,9 @@ class RoleModel extends Model {
     public function getAllRoles(){
         return $this->findAll();
     }
+    public function getRolesForWorkers() {
+        return $this->where('id_role !=', 3)->findAll();
+    }
     
     public function addRole(array $data) {
         return $this->insert($data);

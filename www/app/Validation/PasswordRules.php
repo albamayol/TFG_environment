@@ -26,7 +26,7 @@ class PasswordRules
             foreach ($candidates as $cand) {
                 $needle = mb_strtolower(preg_replace('/\s+/', '', (string)$cand));
                 if (mb_strlen($needle) >= 3 && mb_strpos($haystack, $needle) !== false) {
-                    $error = 'La contraseña no debe contener información personal (email, nombre, teléfono, etc.).';
+                    $error = 'Password can not contain user information (email, name, phone, etc.).';
                     return false;
                 }
             }
