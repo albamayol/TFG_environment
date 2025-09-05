@@ -18,19 +18,13 @@
         <p><strong>Start Date:</strong> <?= esc($project['start_date']) ?></p>
         <p><strong>End Date:</strong> <?= esc($project['end_date']) ?></p>
     </div>
-    <select class="state-select" data-id="<?= esc($project['id_project']) ?>" data-state="<?= esc($project['state']) ?>">
-        <option value="To Begin" <?= $project['state'] === 'To Begin' ? 'selected' : '' ?>>To Begin</option>
-        <option value="Active" <?= $project['state'] === 'Active' ? 'selected' : '' ?>>Active</option>
-        <option value="On Pause" <?= $project['state'] === 'On Pause' ? 'selected' : '' ?>>On Pause</option>
-        <option value="Finished" <?= $project['state'] === 'Finished' ? 'selected' : '' ?>>Finished</option>
-    </select>
-    <div class="project-tasks-list">
-        <p><strong>Tasks:</strong>
-            <ul>
-                <?php foreach ($project['tasks'] as $task): ?>
-                    <li><?= esc($task['name']) ?> (<?= esc($task['status']) ?>)</li>
-                <?php endforeach; ?>
-            </ul>
-        </p>
-    </div>
+    <?php 
+    if($canChangeState): ?>
+        <select class="state-select" data-id="<?= esc($project['id_project']) ?>" data-state="<?= esc($project['state']) ?>">
+            <option value="To Begin" <?= $project['state'] === 'To Begin' ? 'selected' : '' ?>>To Begin</option>
+            <option value="Active" <?= $project['state'] === 'Active' ? 'selected' : '' ?>>Active</option>
+            <option value="On Pause" <?= $project['state'] === 'On Pause' ? 'selected' : '' ?>>On Pause</option>
+            <option value="Finished" <?= $project['state'] === 'Finished' ? 'selected' : '' ?>>Finished</option>
+        </select>
+    <?php endif; ?>
 </div>

@@ -35,18 +35,11 @@ class Projects extends BaseController {
 
         $projects = [
             'projects' => $this->projectModel->getProjectsForUser($userId),
-            'canCreateProject' => in_array(session('role_name'), ['Profile_Admin', 'Manager'])
+            'canCreateProject' => in_array(session('role_name'), ['Profile_Admin', 'Manager']),
+            'canChangeState' => in_array(session('role_name'), ['Manager', 'Head_Of_Team'])
         ];
         return view('projects/myProjects', $projects);
     }
-
-    /*public function show($id) {
-        $project = $this->projectModel->find($id);
-        if (! $project) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
-        }
-        return view('projects/show', ['project' => $project]);
-    }*/
 
     public function create() {
         //HEAD OF TEAMS in the ddbb
@@ -144,7 +137,9 @@ class Projects extends BaseController {
             $this->userProjectRoleModel->assignRole($uid, $roleId, $this->projectModel->getInsertID());
         }
         //save HoT
-        $this->userProjectRoleModel->assignRole($headOfTeamId, 3, $this->projectModel->getInsertID()); //HoT assigned will always have Head of Project Role in a Project
+        $this->userProjectRoleModel->assignRole($headOfTeamId, 3, $this->projectModel->getInsertID()); //HoT assigned will always have Head of Project Role in a Project (ROLE ID RESERVED = 3)
+        //save Creator of the Project
+        $this->userProjectRoleModel->assignRole(session('id_user'), 4, $this->projectModel->getInsertID()); //Creator will always have Project Creator Role in a Project (ROLE ID RESERVED = 4)
 
         return redirect()->to('Projects/MyProjects')->with('message', 'Project successfully created');
     }

@@ -38,8 +38,8 @@ class RoleModel extends Model {
     public function getAllRoles(){
         return $this->findAll();
     }
-    public function getRolesForWorkers() {
-        return $this->where('id_role !=', 3)->findAll();
+    public function getRolesForWorkers() { 
+        return $this->where('id_role !=', 3)->where('id_role !=', 4)->findAll(); //RESERVED ROLES: 3 --> HoT; 4 --> Creator of the Project
     }
     
     public function addRole(array $data) {

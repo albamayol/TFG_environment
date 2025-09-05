@@ -29,7 +29,7 @@ $routes->group('/Projects', ['filter' => 'auth'], function($routes) {
     $routes->get('MyProjects', 'Projects::showMyProjects');
     $routes->get('createProject', 'Projects::create', ['filter' => 'role:Profile_Admin,Manager']);
     $routes->post('store', 'Projects::save', ['filter' => 'role:Profile_Admin,Manager']);
-    $routes->post('updateState/(:num)', 'Projects::updateState/$1');
+    $routes->post('updateState/(:num)', 'Projects::updateState/$1', ['filter' => 'role:Manager,Head_Of_Team']);
 });
 
 $routes->group('/IAM', ['filter' => 'auth', 'role:Profile_Admin,Manager'], function($routes) {
