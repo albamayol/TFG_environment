@@ -150,26 +150,29 @@ class UserModel extends Model {
     }
 
     public function getAllHeadsOfTeam(): array {
-        $hotIDs = $this->headOfTeamModel->findAll(); 
-        foreach ($hotIDs as &$hot) {
-            $hots = $this->where('id_user', $hot['id_head_of_team'])->findAll();
+        $hotIDs = $this->headOfTeamModel->findColumn('id_head_of_team'); 
+        if (empty($hotIDs)) {
+            return [];
         }
+        $hots = $this->whereIn('id_user', $hotIDs)->orderBy('name', 'ASC')->findAll();
         return $hots;
     }
 
     public function getAllWorkers(): array {
-        $workerIDs = $this->workerModel->findAll(); 
-        foreach ($workerIDs as &$worker) {
-            $workers = $this->where('id_user', $worker['id_worker'])->findAll();
+        $workerIDs = $this->workerModel->findColumn('id_worker'); 
+        if (empty($workerIDs)) {
+            return [];
         }
+        $workers = $this->whereIn('id_user', $workerIDs)->orderBy('name', 'ASC')->findAll();
         return $workers;
     }
 
     public function getAllManagers(): array {
-        $managerIDs = $this->managerModel->findAll(); 
-        foreach ($managerIDs as &$manager) {
-            $managers = $this->where('id_user', $manager['id_manager'])->findAll();
+        $managerIDs = $this->managerModel->findColumn('id_manager'); 
+        if (empty($managerIDs)) {
+            return [];
         }
+        $managers = $this->whereIn('id_user', $managerIDs)->orderBy('name', 'ASC')->findAll();
         return $managers;
     }
 

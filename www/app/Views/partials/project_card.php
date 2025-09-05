@@ -25,10 +25,12 @@
         <option value="Finished" <?= $project['state'] === 'Finished' ? 'selected' : '' ?>>Finished</option>
     </select>
     <div class="project-tasks-list">
-        <ul>
-            <?php foreach ($project['tasks'] as $task): ?>
-                <li><?= esc($task['name']) ?> (<?= esc($task['status']) ?>)</li>
-            <?php endforeach; ?>
-        </ul>
+        <p><strong>Tasks:</strong>
+            <ul>
+                <?php foreach ($project['tasks'] as $task): ?>
+                    <li><?= esc($task['name']) ?> (<?= esc($task['status']) ?>)</li>
+                <?php endforeach; ?>
+            </ul>
+        </p>
     </div>
 </div>
