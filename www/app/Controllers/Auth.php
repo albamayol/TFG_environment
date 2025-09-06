@@ -90,6 +90,13 @@ class Auth extends BaseController {
 
         $user = $this->userModel->findByEmail($email);
 
+        //Check if trying to login to a simulated user
+        if ($user && $user['simulated']) {
+            return $isAjax
+                ? $this->jsonLoginError('Unavailable account')
+                : redirect()->back()->with('error', 'Unavailable account');
+        }
+
         if (!$user || empty($user['password'])) {
             return $isAjax
             ? $this->jsonLoginError('Invalid Credentials')
