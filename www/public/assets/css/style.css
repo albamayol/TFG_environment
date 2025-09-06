@@ -439,3 +439,26 @@ details.iam-details > a:last-child {
 tr.is-simulated > td, tr[data-simulated="1"] > td, tr.is-simulated > th, tr[data-simulated="1"] > th {
   background: var(--sim-cell);
 }
+
+.matrix-wrap { margin-top: 10px; }
+.matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  color: #222;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.matrix-table th, .matrix-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+.matrix-table thead th {
+  background: #f7f7f8;
+  font-weight: 700;
+}
+.matrix-table tr.is-simulated > td {
+  background: var(--sim-bg); 
+}

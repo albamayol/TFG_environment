@@ -7,6 +7,7 @@ use App\Models\UserProjectRoleModel;
 use App\Models\TaskModel;
 use App\Models\UserModel;
 use App\Models\RoleModel;
+use App\Models\TasksUsersModel;
 
 class Projects extends BaseController {
     protected $projectModel;
@@ -14,6 +15,7 @@ class Projects extends BaseController {
     protected $roleModel;
     protected $userProjectRoleModel;
     protected $taskModel;
+    protected $tasksUsersModel;
 
     public function __construct() {
         $this->projectModel = new ProjectModel();
@@ -21,6 +23,7 @@ class Projects extends BaseController {
         $this->taskModel = new TaskModel();
         $this->userModel = new UserModel();
         $this->roleModel = new RoleModel();
+        $this->tasksUsersModel = new TasksUsersModel();
     }
 
     public function showMyProjects() {
@@ -40,6 +43,31 @@ class Projects extends BaseController {
         ];
         return view('projects/myProjects', $projects);
     }
+
+    public function matrixTasksUsers(int $projectId) {
+        if ($projectId <= 0) {
+            return $this->response->setStatusCode(400)->setJSON(['error' => 'Invalid project id']);
+        }
+
+        // TODO: authorize access as needed
+
+        helper('datetime');
+
+        // pull from TasksUsersModel now
+        $rows = $this->tasksUsersModel->getTasksWithAssigneesByProject($projectId);
+
+        foreach ($rows as &$r) {
+            $utc = $r['limit_date'] ?? null;
+            $r['limit_date_display'] = $utc ? toUserTimezone($utc, 'Y-m-d H:i') : null;
+        }
+
+        return $this->response->setJSON([
+            'ok'   => true,
+            'rows' => $rows,
+            'csrf' => ['name' => csrf_token(), 'hash' => csrf_hash()],
+        ]);
+    }
+
 
     public function create() {
         //HEAD OF TEAMS in the ddbb

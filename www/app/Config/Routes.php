@@ -32,6 +32,7 @@ $routes->group('/Projects', ['filter' => 'auth'], function($routes) {
     $routes->get('createProject', 'Projects::create', ['filter' => 'role:Profile_Admin,Manager']);
     $routes->post('store', 'Projects::save', ['filter' => 'role:Profile_Admin,Manager']);
     $routes->post('updateState/(:num)', 'Projects::updateState/$1', ['filter' => 'role:Manager,Head_Of_Team']);
+    $routes->get('matrix/(:num)', 'Projects::matrixTasksUsers/$1');  //everyone can see the tasks of their projects and their assignees
 });
 
 $routes->group('/IAM', ['filter' => 'auth', 'role:Profile_Admin,Manager'], function($routes) {

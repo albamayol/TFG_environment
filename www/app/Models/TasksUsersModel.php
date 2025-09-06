@@ -78,4 +78,27 @@ class TasksUsersModel extends Model {
         // Default: return only the current user (for individual tasks)
         return $this->userModel->getSmallInfoForDisplayById($currentUserId);
     }
+
+    public function getTasksWithAssigneesByProject(int $projectId): array {
+        return $this->db->table('Task t')
+        ->select("
+            t.id_task,
+            t.name,
+            t.state,
+            t.priority,
+            t.limit_date,
+            t.duration,
+            t.simulated,
+            GROUP_CONCAT(DISTINCT u.email ORDER BY u.email SEPARATOR ', ') AS assignees
+        ")
+        ->join('tasks_users', 'tasks_users.id_task = t.id_task', 'left')     // keep tasks with no assignees
+        ->join('Usuario u', 'u.id_user = tasks_users.id_user', 'left')
+        ->where('t.id_project', $projectId)
+        ->groupBy('t.id_task, t.name, t.state, t.priority, t.limit_date, t.duration, t.simulated')
+        ->orderBy('(t.limit_date IS NULL)', 'ASC', false)
+        ->orderBy('t.limit_date', 'ASC')
+        ->orderBy('t.duration', 'ASC')
+        ->get()
+        ->getResultArray();
+    }
 }

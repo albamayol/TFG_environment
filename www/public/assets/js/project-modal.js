@@ -60,7 +60,70 @@
       <p><strong>End Date:</strong> ${escapeHtml(card.dataset.endDate || '-')}</p>
       <p><strong>State:</strong> ${escapeHtml(card.dataset.state || '-')}</p>      
     `;
-    bodyHost.innerHTML = html;
+  bodyHost.innerHTML = html;
+
+  const projectId = card.dataset.projectId;
+
+  fetch(`/Projects/matrix/${projectId}`, { credentials: 'same-origin' })
+    .then(r => r.json())
+    .then(json => {
+      if (!json?.ok) return;
+      const rows = json.rows || [];
+      const matrixHTML = renderMatrixTable(rows);
+      bodyHost.insertAdjacentHTML('beforeend', matrixHTML);
+    })
+    .catch(() => {
+      bodyHost.insertAdjacentHTML('beforeend', `<p style="color:#c00">Could not load tasks for this project.</p>`);
+    });
+
+    // ---- helper: build the table HTML
+  function renderMatrixTable(rows){
+    if (!rows.length) {
+      return `<div class="matrix-wrap"><p>No tasks in this project yet.</p></div>`;
+    }
+    let html = `
+    <div class="matrix-wrap">
+      <h3 style="margin-top:14px">Tasks × People</h3>
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Priority</th>
+            <th>State</th>
+            <th>Assignees</th>
+            <th>Limit date</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+    rows.forEach(r => {
+      const priClass   = ('badge-' + String(r.priority || '').toLowerCase());
+      const stateClass = ('badge-' + String(r.state || '').toLowerCase().replace(/\s+/g,'-'));
+      const assignees  = r.assignees || '—';
+      const limitDisp  = r.limit_date_display || '—';
+      const dur        = r.duration || '—';
+      const simClass   = (parseInt(r.simulated, 10) === 1) ? 'is-simulated' : '';
+
+      html += `
+        <tr class="${simClass}">
+          <td>${escapeHtml(r.name || '')}</td>
+          <td><span class="badge ${priClass}">${escapeHtml(r.priority || '')}</span></td>
+          <td><span class="badge ${stateClass}">${escapeHtml(r.state || '')}</span></td>
+          <td>${escapeHtml(assignees)}</td>
+          <td>${escapeHtml(limitDisp)}</td>
+          <td>${escapeHtml(dur)}</td>
+        </tr>
+      `;
+    });
+
+    html += `
+          </tbody>
+        </table>
+      </div>
+    `;
+    return html;
+  }  
 
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -108,38 +171,6 @@
     });
   });
 
-  //handler for delete
-  /*document.addEventListener('click', (e) => {
-    const btn = e.target.closest('button#deleteTaskBtn');
-    if (!btn) return;
-
-    const card = document.querySelector(`.task-card[data-task-id="${btn.dataset.id}"]`);
-    const url  = card?.dataset.deleteUrl;
-    if (!url) return;
-    if (!confirm('Delete this task?')) return;
-
-    fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'same-origin',
-      body: JSON.stringify(csrf())     //reuse csrf() helper
-    })
-    .then(r => r.json().catch(() => ({})))
-    .then(json => {
-      updateCsrfFromResponse(json);    //keep CSRF fresh for next calls
-      if (json?.ok) {
-        card?.remove();
-        modal.style.display = 'none';
-        document.body.style.overflow = '';
-        if (typeof recalcCompletionPct === 'function') recalcCompletionPct();
-      } else {
-        alert(json?.error || 'Delete failed');
-      }
-    })
-    .catch(() => alert('Delete failed'));
-  });*/
-
-
   //to avoid XSS when injecting dataset values
   function escapeHtml(str) {
     return String(str)
@@ -149,25 +180,4 @@
       .replaceAll('"','&quot;')
       .replaceAll("'",'&#39;');
   }
-
-  /*function recalcCompletionPct() {
-    const pctNode = document.getElementById('completionPct');
-    if (!pctNode) return; //Not on My Day
-
-    //Count cards in today's list
-    const cards = document.querySelectorAll('.tasks-container .task-card');
-    const total = cards.length;
-    if (!total) { pctNode.textContent = '0'; return; }
-
-    let done = 0;
-    cards.forEach(card => {
-      const state =
-        (card.dataset.state || '').toLowerCase() ||
-        (card.querySelector('.state-select')?.dataset.state || '').toLowerCase();
-      if (state === 'done') done++;
-    });
-
-    pctNode.textContent = Math.round((done / total) * 100);
-  }*/
-
 })();
