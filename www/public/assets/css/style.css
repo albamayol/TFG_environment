@@ -11,6 +11,7 @@
   --border:#1f2a3e;
   --shadow: 0 12px 30px rgba(0,0,0,.35);
   --radius: 14px;
+  --sim-bg:#bdc7e6;
 }
 
 html,body{
@@ -418,4 +419,23 @@ details.iam-details > a:last-child {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+}
+
+/*SIMULATIONS*/
+/* Highlight simulated users */
+
+/* Simulated generic */
+.is-simulated, [data-simulated="1"] {
+  background: var(--sim-bg);
+  border-left: 4px solid var(--sim-accent);
+}
+
+.project-card.is-simulated, .project-card[data-simulated="1"], .task-card.is-simulated, .task-card[data-simulated="1"] {
+  background: var(--sim-bg);
+  border-left: 4px solid var(--sim-accent);
+}
+
+/* Tables: tint cells when the row is simulated */
+tr.is-simulated > td, tr[data-simulated="1"] > td, tr.is-simulated > th, tr[data-simulated="1"] > th {
+  background: var(--sim-cell);
 }

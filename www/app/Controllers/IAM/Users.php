@@ -55,7 +55,7 @@ class Users extends BaseController {
             'telephone' => $tel,
             'soft_skills' => $this->request->getPost('soft_skills'),
             'technical_skills' => $this->request->getPost('technical_skills'),
-            'simulated' => 0, // Default value for simulated
+            'simulated' => $this->request->getPost('simulated') ? 1 : 0, // Default value for simulated
             'Role' => $this->request->getPost('role') ?? 'Manager', // Default role is Manager
         ];
 

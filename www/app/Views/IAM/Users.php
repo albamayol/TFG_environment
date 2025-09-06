@@ -24,7 +24,7 @@
                 </tr>
             <?php endif; ?>
             <?php foreach ($users as $user): ?>
-                <tr>
+                <tr class="<?= $user['simulated'] ? 'is-simulated' : '' ?>">
                     <td><?= esc ($user['name']) ?></td>
                     <td><?= esc ($user['surnames']) ?></td>
                     <td><?= esc ($user['email']) ?></td>

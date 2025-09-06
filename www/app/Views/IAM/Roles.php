@@ -21,7 +21,7 @@
                 </tr>
             <?php endif; ?>
             <?php foreach ($roles as $role): ?>
-                <tr>
+                <tr class="<?= $role['simulated'] ? 'is-simulated' : '' ?>">
                     <td><?= esc ($role['name']) ?></td>
                     <td><?= esc ($role['description']) ?></td>
                     <td><?= esc ($role['skills']) ?></td>

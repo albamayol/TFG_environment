@@ -1,10 +1,12 @@
-<div class="project-card"
+<?php $isSim = (int)($project['simulated'] ?? 0) === 1; ?>
+<div class="project-card <?= $isSim ? 'is-simulated' : '' ?>"
     data-project-id="<?= esc($project['id_project']) ?>"
     data-name="<?= esc($project['name']) ?>"
     data-description="<?= esc($project['description']) ?>"
     data-start-date="<?= esc($project['start_date'] ?? ($project['start_date'] ?? '-')) ?>"
     data-end-date="<?= esc($project['end_date'] ?? ($project['end_date'] ?? '-')) ?>"
     data-state="<?= esc($project['state']) ?>"
+    data-simulated="<?= $isSim ? '1' : '0' ?>"
     >
     <div class="project-card-header">
         <strong class="project-name"><?= esc($project['name']) ?></strong>

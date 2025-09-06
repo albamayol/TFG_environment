@@ -20,7 +20,7 @@
                 </tr>
             <?php endif; ?>
             <?php foreach ($actions as $action): ?>
-                <tr>
+                <tr class="<?= $action['simulated'] ? 'is-simulated' : '' ?>">
                     <td><?= esc ($action['name']) ?></td>
                     <td><?= esc ($action['description']) ?></td>
                 </tr>

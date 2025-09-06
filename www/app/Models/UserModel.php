@@ -126,7 +126,7 @@ class UserModel extends Model {
     }
 
     public function getUsersForIAM() {
-        $users = $this->select('id_user, name, surnames, email')->findAll();
+        $users = $this->select('id_user, name, surnames, email, simulated')->findAll();
         foreach ($users as &$user) {
             $user['role'] = $this->getRole($user['id_user']) ?? null;
         }

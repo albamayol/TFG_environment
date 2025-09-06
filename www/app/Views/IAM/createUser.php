@@ -209,6 +209,10 @@
             <?php if (service('validation')->hasError('role')): ?>
             <div class="error"><?= service('validation')->showError('role') ?></div>
             <?php endif; ?>
+      <div class="form-group form-check">
+        <input type="checkbox" id="simulated" name="simulated" value="1" class="form-check-input">
+        <label for="simulated" class="form-check-label">Simulated?</label>
+      </div>
       <div style="margin-top:1rem; display:flex; gap:.75rem; justify-content:flex-end;">
         <button type="submit" class="btn">Create account</button>
       </div>

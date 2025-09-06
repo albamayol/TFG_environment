@@ -128,7 +128,8 @@ class Projects extends BaseController {
             'description' => $this->request->getPost('description'),
             'start_date'  => $this->request->getPost('start_date'),
             'end_date'    => $this->request->getPost('end_date'),
-            'state' => 'To Begin'
+            'state' => 'To Begin',
+            'simulated' => $this->request->getPost('simulated') ? 1 : 0
         ]);
 
         // Validate each selected worker has a role:

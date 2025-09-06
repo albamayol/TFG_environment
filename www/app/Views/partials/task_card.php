@@ -2,10 +2,11 @@
   $meEmail    = trim((string)($currentUserEmail ?? ''));
   $ownerEmail = trim((string)($task['person_of_interest'] ?? ''));
   $isOwner    = ($ownerEmail !== '') && (strcasecmp($ownerEmail, $meEmail) === 0);
+  $isSim = (int)($task['simulated'] ?? 0) === 1;
 ?>
 
 <div
-    class="task-card"
+    class="task-card <?= $isSim ? 'is-simulated' : '' ?>"
     data-task-id="<?= esc($task['id_task']) ?>"
     data-name="<?= esc($task['name']) ?>"
     data-description="<?= esc($task['description']) ?>"
@@ -15,6 +16,7 @@
     data-state="<?= esc($task['state']) ?>"
     data-person="<?= esc($task['person'] ?? ($task['person_of_interest'] ?? '-')) ?>"
     data-origin="<?= esc($task['origin_of_task']) ?>"
+    data-simulated="<?= $isSim ? '1' : '0' ?>"
 
     data-can-delete="<?= $isOwner ? '1' : '0' ?>"
     data-delete-url="<?= site_url('Tasks/delete/' . $task['id_task']) ?>"
