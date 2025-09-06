@@ -9,6 +9,7 @@ class UserModel extends Model {
     protected $managerModel;
     protected $headOfTeamModel;
     protected $workerModel;
+    protected $taskModel;
 
     public function __construct()
     {
@@ -17,6 +18,7 @@ class UserModel extends Model {
         $this->managerModel = new ManagerModel();
         $this->headOfTeamModel = new HeadOfTeamModel();
         $this->workerModel = new WorkerModel();
+        $this->taskModel = new TaskModel();
     }
 
     protected $table      = 'Usuario';
@@ -144,6 +146,8 @@ class UserModel extends Model {
         $users = $this->select('id_user, name, surnames, email, simulated')->findAll();
         foreach ($users as &$user) {
             $user['role'] = $this->getRole($user['id_user']) ?? null;
+            //$user['tasks'] = $this->getUserTasks($user['id_user']);
+            $user['tasks'] = $this->taskModel->getTasksForUser($user['id_user']);
         }
         return $users;
     }

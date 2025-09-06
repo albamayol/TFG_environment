@@ -41,16 +41,16 @@ nav {
 nav a, .iam-link {
      text-decoration: none;
     color: inherit;
-    padding: 0 1em;                /* Only horizontal padding */
+    padding: 0 1em;               
     border-radius: 4px;
     transition: border 0.2s, background 0.2s;
     cursor: pointer;
     font-size: 1em;
-    display: flex;                 /* Use flex for perfect centering */
-    align-items: center;           /* Center vertically */
-    justify-content: center;       /* Center horizontally */
+    display: flex;                
+    align-items: center;           
+    justify-content: center;       
     height: 40px;
-    min-width: 100px;              /* Optional: consistent width */
+    min-width: 100px;              
     box-sizing: border-box;
     border: 2px solid transparent;
     text-align: center;
@@ -75,7 +75,7 @@ details.iam-details > summary.iam-link {
     height: 40px;
     line-height: 40px;
     box-sizing: border-box;
-    border: 2px solid transparent;        /* Center text horizontally */
+    border: 2px solid transparent;        
 }
 
 details.iam-details > a {
@@ -234,14 +234,14 @@ details.iam-details > a:last-child {
 .link{ font-weight: 600; }
 
 .spinner{
-  width: 0; height: 0; /* hidden by default */
+  width: 0; height: 0;
   border: 2px solid transparent;
   border-top-color: white;
   border-radius: 50%;
   animation: spin .9s linear infinite;
 }
 .btn[disabled] .spinner{
-  width: 14px; height: 14px; /* show when disabled */
+  width: 14px; height: 14px;
 }
 
 
@@ -249,12 +249,12 @@ details.iam-details > a:last-child {
   to{ transform: rotate(360deg); }
 }
 
-/* Responsive niceties */
+/* Responsive */
 @media (max-width: 480px){
   .auth-card{ padding: 22px; }
 }
 
-/* Badges for state & priority */
+/* Badges */
 .badge {
   display: inline-block;
   padding: 2px 8px;
@@ -282,7 +282,6 @@ details.iam-details > a:last-child {
 .badge-high         { background-color: #e67e22; }
 .badge-urgent       { background-color: #e74c3c; }
 
-/* Align the state badge nicely next to the title */
 .task-header strong { margin-right: 8px; }
 
 /*    TASKS STYLE   */
@@ -302,42 +301,57 @@ details.iam-details > a:last-child {
   padding: 12px;
   cursor: pointer;
 }
-/* Cards are white: ensure dark readable text */
 .task-card, .task-card p, .task-card strong { color: #222; }
 
-/* Header row: title left, state pill right */
 .task-card .task-header {
   display: flex;
   align-items: center;
 }
 
-/* Push the state pill to the far right */
 .task-card .task-header .state-badge {
   margin-left: auto;
 }
-/* If the last thing in the header is a badge, push it right */
 .task-card .task-header .badge:last-child { margin-left: auto; }
 
 /* === Shared modal styles === */
 .modal{
   position: fixed;
   inset: 0;
-  display: none;                /* JS toggles this to flex */
+  display: none;               
   align-items: center;
   justify-content: center;
-  background: rgba(0,0,0,.55);  /* dimmed backdrop */
-  z-index: 10000;               /* above everything */
+  background: rgba(0,0,0,.55);  
+  z-index: 10000;               
 }
 
 .modal-content{
   position: relative;
-  background: #fff;             /* <- important: white panel */
-  color: #222;                  /* readable on white */
+  background: #fff;            
+  color: #222;                 
   width: min(720px, 92vw);
   border-radius: 12px;
   padding: 20px 22px;
   box-shadow: 0 12px 36px rgba(0,0,0,.35);
   animation: modal-in .18s ease-out;
+}
+
+.modal-content.modal--scroll{
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* scroll area */
+.modal-body{
+  overflow: auto;
+  min-height: 0;       
+}
+
+.matrix-table thead th{
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1;
 }
 
 .modal-close{
@@ -352,7 +366,7 @@ details.iam-details > a:last-child {
   color: #666;
 }
 
-/*animation for when modal appears*/
+/*animation when modal appears*/
 @keyframes modal-in {
   from { transform: translateY(6px); opacity: 0; }
   to   { transform: translateY(0);   opacity: 1; }
@@ -394,7 +408,6 @@ details.iam-details > a:last-child {
   display:block; 
 }
 
-/* “No tasks” messages in white columns */
 .board .column > p { color: #333; }
 
 .state-select {
@@ -422,8 +435,6 @@ details.iam-details > a:last-child {
 }
 
 /*SIMULATIONS*/
-/* Highlight simulated users */
-
 /* Simulated generic */
 .is-simulated, [data-simulated="1"] {
   background: var(--sim-bg);
@@ -435,7 +446,6 @@ details.iam-details > a:last-child {
   border-left: 4px solid var(--sim-accent);
 }
 
-/* Tables: tint cells when the row is simulated */
 tr.is-simulated > td, tr[data-simulated="1"] > td, tr.is-simulated > th, tr[data-simulated="1"] > th {
   background: var(--sim-cell);
 }

@@ -2,130 +2,46 @@
 <?= $this->extend('layouts/main') ?>
 <?= $this->section('content') ?>
 <div class="user-container">
-        <h1 style="color: #11306aff">Users</h1>
-        <?php if ($canCreateUsers): ?>
-            <button type="button" class="btn-create-user" onclick="window.location.href='/IAM/Users/createUser'">
-                Create User
-            </button>
+    <h1 style="color: #11306aff">Users</h1>
+    <?php if ($canCreateUsers): ?>
+        <button type="button" class="btn-create-user" onclick="window.location.href='/IAM/Users/createUser'">
+            Create User
+        </button>
+    <?php endif; ?>
+    <table id="usersTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Surnames</th>
+                <th>Email</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php if (empty($users)): ?>
+            <tr>
+                <td colspan="4">No users defined.</td>
+            </tr>
         <?php endif; ?>
-        <table id="usersTable">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Surnames</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                </tr>
-            </thead>
-            <tbody>
-            <?php if (empty($users)): ?>
-                <tr>
-                    <td colspan="4">No users defined.</td>
-                </tr>
-            <?php endif; ?>
-            <?php foreach ($users as $user): ?>
-                <tr class="<?= $user['simulated'] ? 'is-simulated' : '' ?>">
-                    <td><?= esc ($user['name']) ?></td>
-                    <td><?= esc ($user['surnames']) ?></td>
-                    <td><?= esc ($user['email']) ?></td>
-                    <td class="role-label">
-                        <?php
-                            $role = $user['role'] ?? null;
-                            echo $roleLabels[$role] ?? esc ($role ?? '—');
-                        ?>
-                    </td> 
-                    <?php if ($canDeleteUsers): ?>
-                        <td>
-                            <button
-                                type="button"
-                                id="deleteTaskBtn"
-                                class="icon-btn icon-btn--trash js-delete-user"
-                                title="Delete User"
-                                aria-label="Delete User"
-                                data-id="<?= esc($user['id_user']) ?>"
-                                style="flex:0 0 auto"
-                                >
-                                <img src="/assets/media/icons/trash_bin.svg" alt="Delete" width="22" height="22" loading="eager" decoding="async">
-                            </button>
-                        </td>
-                    <?php endif; ?>
-                </tr>
-                
-            <?php endforeach; ?>
-            </tbody>
-        </table>
-        </div>
+        <?php foreach ($users as $user): ?>
+            <?= view('partials/user_row', [
+                'user' => $user,
+                'roleLabels' => $roleLabels ?? [],
+                'canDeleteUsers' => $canDeleteUsers ?? false,
+            ]) ?>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
 
-    <style>
-        .btn-create-user {
-                display: inline-block;
-                margin-bottom: 18px;
-                padding: 10px 18px;
-                background: #11306aff;
-                color: #fff;
-                border-radius: 6px;
-                border: none;
-                font-weight: 600;
-                cursor: pointer;
-                transition: background 0.2s;
-            }
-        .btn-create-user:hover {
-            background: #1a418c;
-        }
-        .user-container { 
-            max-width: 900px; 
-            margin: 40px auto; 
-            background: #fff; 
-            padding: 30px; 
-            border-radius: 8px;
-            box-shadow: 0 2px 8px #ccc; 
-        }
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-        }
+<div id="userModal" class="modal" style="display:none;">
+    <div class="modal-content modal--scroll">
+        <button id="closeModalBtn" class="modal-close" aria-label="Close">&times;</button>
+        <div id="userModalBody" class="modal-body"></div>
+    </div>
+</div>
 
-        th, td { 
-            padding: 12px 10px; 
-            border-bottom: 1px solid #eee; 
-            text-align: left; 
-            color: #11306aff;
-        }
-        th { 
-            background: #f0f0f0; 
-        }
-        tr:hover { 
-            background: #f9f9f9; 
-        }
-        .role-label { 
-            font-weight: bold; 
-        }
-    </style>
-
-    <script>
-        // Example: simple search/filter functionality
-        // Add an input box above the table for searching by name/email
-        document.addEventListener('DOMContentLoaded', function() {
-            const container = document.querySelector('.container');
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.placeholder = 'Search by name or email...';
-            input.style.marginBottom = '15px';
-            input.style.width = '100%';
-            input.style.padding = '8px';
-            container.insertBefore(input, container.querySelector('table'));
-
-            input.addEventListener('input', function() {
-                const filter = input.value.toLowerCase();
-                const rows = document.querySelectorAll('#usersTable tbody tr');
-                rows.forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(filter) ? '' : 'none';
-                });
-            });
-        });
-    </script>
-
-<script src="/assets/js/users.js"></script>
+<script src="<?= base_url('assets/js/users.js') ?>" defer></script>
+<script src="<?= base_url('assets/js/user-modal.js') ?>" defer></script>
 
 <?= $this->endSection() ?>

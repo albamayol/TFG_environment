@@ -29,7 +29,6 @@
   modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.style.display !== 'none') closeModal(); });
 
-  //Prevents opening the modal when using the <select>
   document.addEventListener('mousedown', (e) => { if (e.target.closest('.state-select')) e.stopPropagation(); }, { capture:true });
   document.addEventListener('click',     (e) => { if (e.target.closest('.state-select')) e.stopPropagation(); }, { capture:true });
 
@@ -37,7 +36,6 @@
     const card = e.target.closest('.project-card');
     if (!card || e.target.closest('.state-select')) return;
 
-    // Build modal HTML from the card’s dataset
     const canDelete = card.dataset.canDelete === '1';
     const html = `
       <h2 style="margin-top:0">${escapeHtml(card.dataset.name || '')}</h2>
@@ -76,7 +74,6 @@
       bodyHost.insertAdjacentHTML('beforeend', `<p style="color:#c00">Could not load tasks for this project.</p>`);
     });
 
-    // ---- helper: build the table HTML
   function renderMatrixTable(rows){
     if (!rows.length) {
       return `<div class="matrix-wrap"><p>No tasks in this project yet.</p></div>`;
@@ -129,7 +126,7 @@
     document.body.style.overflow = 'hidden';
   });
 
-  //Change state (delegated, works for cards rendered anywhere)
+  //Change state
   document.addEventListener('change', (e) => {
     const select = e.target.closest('.state-select');
     if (!select) return;
@@ -149,9 +146,8 @@
       return res.json();
     })
     .then(json => {
-      updateCsrfFromResponse(json);           // <—— CRITICAL LINE
+      updateCsrfFromResponse(json); 
 
-      // keep existing badge update, but DON'T overwrite className:
       const card = select.closest('.project-card');
       if (card) {
         const badge = card.querySelector('.state-badge') || card.querySelector('.project-card-header .badge') || card.querySelector('.badge');

@@ -17,9 +17,9 @@
 
     <!-- Shared Modal (now minimal; JS injects the body) -->
     <div id="projectModal" class="modal" style="display:none;">
-        <div class="modal-content">
+        <div class="modal-content modal--scroll">
             <button id="closeModalBtn" class="modal-close" aria-label="Close">&times;</button>
-            <div id="projectModalBody"></div>
+            <div id="projectModalBody" class="modal-body"></div>
         </div>
     </div>
 </div>

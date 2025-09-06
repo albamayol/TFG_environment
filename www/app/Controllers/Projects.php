@@ -48,12 +48,8 @@ class Projects extends BaseController {
         if ($projectId <= 0) {
             return $this->response->setStatusCode(400)->setJSON(['error' => 'Invalid project id']);
         }
-
-        // TODO: authorize access as needed
-
         helper('datetime');
 
-        // pull from TasksUsersModel now
         $rows = $this->tasksUsersModel->getTasksWithAssigneesByProject($projectId);
 
         foreach ($rows as &$r) {
@@ -91,10 +87,10 @@ class Projects extends BaseController {
         helper('datetime');
       
         $headOfTeamId = $this->request->getPost('head-of-team');
-        $selectedWorkers = (array) $this->request->getPost('workers'); // ['12','18',...]
-        $rolesMap        = (array) $this->request->getPost('roles');   // ['12'=>'3','18'=>'2',...]
+        $selectedWorkers = (array) $this->request->getPost('workers'); 
+        $rolesMap        = (array) $this->request->getPost('roles');   
 
-        // Fetch valid role IDs to guard 'in_list'
+        // Fetch valid role IDs to save 'in_list'
         $roleRows      = $this->roleModel->select('id_role')->findAll();
         $validRoleIds  = array_map('strval', array_column($roleRows, 'id_role'));
         $validRoleList = implode(',', $validRoleIds);
@@ -107,7 +103,6 @@ class Projects extends BaseController {
             'end_date' => 'required|valid_date[Y-m-d\TH:i]|after_date[start_date]',
             'head-of-team' => 'required|is_natural_no_zero',
             'workers' => 'required',
-            //'roles' => 'required',
             
         ];
         $messages = [
@@ -136,7 +131,6 @@ class Projects extends BaseController {
             ],
         ];
 
-        // Add a per-worker rule: roles.<workerId> is required + must be a valid role
         foreach ($selectedWorkers as $wid) {
             $widStr = (string) $wid;
             $rules["roles.$widStr"] = "required|in_list[$validRoleList]";
