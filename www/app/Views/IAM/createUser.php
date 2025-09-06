@@ -3,58 +3,146 @@
 <?= $this->section('content') ?>
 
 <style>
-  .auth-wrap { display:flex; justify-content:center; padding:2rem; }
+  .auth-wrap { 
+    display:flex; 
+    justify-content:center; 
+    padding:2rem; }
   .auth-card {
-    width:100%; max-width:860px; background:#fff; border-radius:16px;
-    box-shadow:0 10px 30px rgba(0,0,0,.08); padding:2rem;
+    width:100%; 
+    max-width:860px; 
+    background:#fff; 
+    border-radius:16px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08); 
+    padding:2rem;
   }
-  .auth-card h1 { margin:0 0 1rem; font-size:1.6rem; }
-  .subtle { color:#666; margin-bottom:1.25rem; }
+  .auth-card h1 { 
+    margin:0 0 1rem; 
+    font-size:1.6rem; }
+  .subtle { 
+    color:#666; 
+    margin-bottom:1.25rem; 
+  }
 
   .alert-errors {
-    background:#fff3f3; border:1px solid #f5c2c7; color:#b02a37;
-    padding:.75rem 1rem; border-radius:10px; margin-bottom:1rem;
+    background:#fff3f3; 
+    border:1px solid #f5c2c7; 
+    color:#b02a37;
+    padding:.75rem 1rem; 
+    border-radius:10px; 
+    margin-bottom:1rem;
   }
-  .alert-errors ul { margin:.25rem 0 0 1rem; }
+  .alert-errors ul { 
+    margin:.25rem 0 0 1rem; 
+  }
 
-  form .grid { display:grid; gap:1rem; }
+  form .grid { 
+    display:grid; 
+    gap:1rem; 
+  }
   @media (min-width: 720px) {
-    form .grid.cols-2 { grid-template-columns: 1fr 1fr; }
+    form .grid.cols-2 { 
+      grid-template-columns: 1fr 1fr; 
+    }
   }
 
-  label { display:block; font-weight:600; margin-bottom:.35rem; }
-  .field { display:flex; flex-direction:column; }
+  label {  
+    display:block; 
+    font-weight:600; 
+    margin-bottom:.35rem; 
+  }
+  .field { 
+    display:flex; 
+    flex-direction:column; 
+  }
   .input, textarea, select {
-    width:100%; border:1px solid #e5e7eb; border-radius:12px; padding:.75rem .9rem;
-    outline:0; transition:border .15s, box-shadow .15s; background:#fff;
+    width:100%; 
+    border:1px solid #e5e7eb; 
+    border-radius:12px; 
+    padding:.75rem .9rem;
+    outline:0; 
+    transition:border .15s, 
+    box-shadow .15s; 
+    background:#fff;
   }
   .input:focus, textarea:focus {
-    border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.15);
+    border-color:#2563eb; 
+    box-shadow:0 0 0 3px rgba(37,99,235,.15);
   }
-  .hint { color:#6b7280; font-size:.85rem; margin-top:.35rem; }
-  .error { color:#b02a37; font-size:.85rem; margin-top:.35rem; }
+  .hint { 
+    color:#6b7280; 
+    font-size:.85rem; 
+    margin-top:.35rem; 
+  }
+  .error { 
+    color:#b02a37; 
+    font-size:.85rem; 
+    margin-top:.35rem; 
+  }
 
-  .pwd-box { position:relative; }
+  .pwd-box { 
+    position:relative; 
+  }
   .pwd-toggle {
-    position:absolute; right:.5rem; top:50%; transform:translateY(-50%);
-    background:transparent; border:0; cursor:pointer; font-size:.9rem; color:#2563eb;
+    position:absolute; 
+    right:.5rem; 
+    top:50%; 
+    transform:translateY(-50%);
+    background:transparent; 
+    border:0; 
+    cursor:pointer; 
+    font-size:.9rem; 
+    color:#2563eb;
   }
-  .requirements { margin:.4rem 0 .6rem 1.1rem; color:#444; font-size:.9rem; }
+  .requirements { 
+    margin:.4rem 0 .6rem 1.1rem; 
+    color:#444; 
+    font-size:.9rem; 
+  }
   .btn {
-    background:#111827; color:#fff; border:0; border-radius:12px; padding:.85rem 1.1rem;
-    font-weight:600; cursor:pointer; transition:transform .05s ease, box-shadow .15s ease;
+    background:#111827; 
+    color:#fff; 
+    border:0; 
+    border-radius:12px; 
+    padding:.85rem 1.1rem;
+    font-weight:600; 
+    cursor:pointer; 
+    transition:transform .05s ease,
+    box-shadow .15s ease;
   }
-  .btn:hover { box-shadow:0 6px 18px rgba(0,0,0,.12); }
-  .btn:active { transform:translateY(1px); }
+  .btn:hover { 
+    box-shadow:0 6px 18px rgba(0,0,0,.12); 
+  }
+  .btn:active { 
+    transform:translateY(1px); 
+  }
 
   /* Soft dark mode if the layout respects prefers-color-scheme */
   @media (prefers-color-scheme: dark) {
-    .auth-card { background:#111315; color:#e5e7eb; box-shadow:none; border:1px solid #1f2937; }
-    .input, textarea, select { background:#0b0d0f; color:#e5e7eb; border-color:#374151; }
-    .input:focus, textarea:focus { box-shadow:0 0 0 3px rgba(37,99,235,.25); }
-    .subtle { color:#9ca3af; }
-    .hint { color:#9ca3af; }
-    .alert-errors { background:#2a0f12; border-color:#7a2d34; color:#fca5a5; }
+    .auth-card { 
+      background:#111315; 
+      color:#e5e7eb; 
+      box-shadow:none; 
+      border:1px solid #1f2937; 
+    }
+    .input, textarea, select { 
+      background:#0b0d0f; 
+      color:#e5e7eb; 
+      border-color:#374151; 
+    }
+    .input:focus, textarea:focus { 
+      box-shadow:0 0 0 3px rgba(37,99,235,.25); 
+    }
+    .subtle { 
+      color:#9ca3af; 
+    }
+    .hint { 
+      color:#9ca3af; 
+    }
+    .alert-errors { 
+      background:#2a0f12; 
+      border-color:#7a2d34; 
+      color:#fca5a5; 
+    }
   }
 </style>
 

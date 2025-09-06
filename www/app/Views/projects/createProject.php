@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function () {
         function sync() {
             if (cb.checked) {
                 sel.disabled = false;
-                sel.setAttribute('required', 'required'); // require a role if worker is selected
+                sel.setAttribute('required', 'required'); //require a role if worker is selected
             } else {
                 sel.disabled = true;
                 sel.removeAttribute('required');
@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         cb.addEventListener('change', sync);
-        sync(); // initialize state
+        sync(); //init state
     });
 });
 </script>

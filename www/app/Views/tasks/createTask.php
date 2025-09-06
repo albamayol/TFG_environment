@@ -116,14 +116,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function loadUsers(projectId) {
         const url = usersBaseUrl + (projectId ? '/' + projectId : '');
-        // Fetch users for the selected project via AJAX
+        // Fetch users via AJAX
         fetch(url, {
             headers: {
                 'Accept': 'application/json'
             }
         })  .then(res => res.json())
             .then(data => {
-                // Clear and repopulate the user select
                 userSelect.innerHTML = '<option value="">-- Select User --</option>';
                 data.forEach(u => {
                     const opt = document.createElement('option');
@@ -131,13 +130,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     opt.textContent = u.email || '';
                     userSelect.appendChild(opt);
                 });
-                // If the currently selected user isn't in this project, clear it
                 if (![...userSelect.options].some(o => o.value === userSelect.value)) {
                     userSelect.value = '';
                 }
             })
             .catch(() => {
-                // On error, leave existing options
             });
     }
 

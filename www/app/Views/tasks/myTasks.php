@@ -57,7 +57,7 @@ $tasksExpired = isset($tasksExpired) ? $tasksExpired : [];
   </div>
 </div>
 
-<!-- Shared Modal (minimal; JS injects the body) -->
+<!-- Shared Modal -->
 <div id="taskModal" class="modal" style="display:none;">
   <div class="modal-content">
     <button id="closeModalBtn" class="modal-close" aria-label="Close">&times;</button>
@@ -65,7 +65,6 @@ $tasksExpired = isset($tasksExpired) ? $tasksExpired : [];
   </div>
 </div>
 
-<!-- Styles specific to the My Tasks board and modal.  Card styling lives in style.css via task_card.php. -->
 <style>
   .board {
     display: flex;

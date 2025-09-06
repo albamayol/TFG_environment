@@ -14,7 +14,7 @@ $(function () {
     return $('meta[name="csrf-token"]').attr('content');
   }
 
-  // Refresh CSRF in meta + hidden field (CI rotates per request)
+  //refresh CSRF + hidden field 
   function refreshCsrf(csrf) {
     if (!csrf || !csrf.name || !csrf.hash) return;
     $('meta[name="csrf-token"]').attr('content', csrf.hash);
@@ -31,7 +31,6 @@ $(function () {
       password: $form.find('input[name="password"]').val()
     };
 
-    // Basic client check (optional)
     if (!payload.email || !payload.password) {
       showError('Email y contraseña son obligatorios');
       return;
@@ -42,7 +41,7 @@ $(function () {
 
     $.ajax({
       type: 'POST',
-      url:  $form.attr('action'), // "/login"
+      url:  $form.attr('action'), // /login
       contentType: 'application/json;charset=utf-8',
       dataType: 'json',
       data: JSON.stringify(payload),
@@ -58,7 +57,7 @@ $(function () {
         showError((data && data.error) || 'Authentication error');
         return;
       }
-      // success → redirect
+      //success and redirect
       window.location.href = data.redirect || '/Tasks/MyDay';
     })
     .fail(function (jqXHR) {

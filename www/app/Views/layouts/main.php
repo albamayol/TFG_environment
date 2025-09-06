@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const cookieMatch = document.cookie.match(/(?:^|;)\s*user_timezone=([^;]+)/);
   const tzCookie = cookieMatch ? decodeURIComponent(cookieMatch[1]) : null;
 
-  // If first time OR timezone changed (travel/DST), (re)post it
+  //if first time or timezone changed, re-post it
   if (tzNow && tzNow !== tzCookie) {
     const tokenNameMeta = document.querySelector('meta[name="csrf-token-name"]');
     const tokenMeta     = document.querySelector('meta[name="csrf-token"]');
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const tokenValue    = tokenMeta ? tokenMeta.content : null;
 
     const body = { timezone: tzNow };
-    if (tokenName && tokenValue) body[tokenName] = tokenValue; // CI4 expects token in payload
+    if (tokenName && tokenValue) body[tokenName] = tokenValue; //CI4 expects token in payload
 
     fetch('/timezone/set-timezone', {
       method: 'POST',
@@ -37,15 +37,13 @@ document.addEventListener('DOMContentLoaded', function () {
     })
     .then(r => r.ok ? r.json().catch(()=> ({})) : Promise.reject())
     .then(json => {
-      // Persist for a day to avoid spamming; update if it changes later
       document.cookie = 'user_timezone=' + encodeURIComponent(tzNow) + '; path=/; max-age=86400';
-      // Optional: if your endpoint returns a refreshed CSRF token, update the meta
       if (json && json.csrf && json.csrf.name && json.csrf.hash) {
         if (tokenNameMeta) tokenNameMeta.content = json.csrf.name;
         if (tokenMeta)     tokenMeta.content     = json.csrf.hash;
       }
     })
-    .catch(() => { /* non-fatal: app will just fallback to UTC */ });
+    .catch(() => { });
   }
 });
 </script>

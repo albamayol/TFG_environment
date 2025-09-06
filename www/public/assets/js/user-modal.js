@@ -37,7 +37,7 @@
     const name     = row.dataset.name || '';
     const surnames = row.dataset.surnames || '';
     const email    = row.dataset.email || '-';
-    //const tasks     = row.dataset.tasks || '[]';
+    
     let tasks = [];
     try { 
         tasks = JSON.parse(row.dataset.tasks || '[]'); 
@@ -45,14 +45,12 @@
         tasks = []; 
     }
 
-    // Build modal HTML from the user's dataset
     body.innerHTML = `
       <h2 style="margin:0 0 6px 0">${escapeHtml(name)}</h2>
       ${surnames ? `<p style="margin:0 0 10px 0">${escapeHtml(surnames)}</p>` : ''}
       <p><strong>Email:</strong> ${escapeHtml(email)}</p>
       ${renderTasksTable(tasks)}
     `;
-    //bodyHost.innerHTML = html;
 
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';

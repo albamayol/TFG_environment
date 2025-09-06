@@ -64,7 +64,6 @@
 <?= $this->section('scripts') ?>
 <script src="<?= base_url('assets/js/ajax.js') ?>"></script>
 <script>
-// small, safe UI sugar that won't interfere with ajax.js
 (() => {
   const pwd = document.getElementById('password');
   const btn = document.getElementById('togglePwd');

@@ -15,7 +15,7 @@
         <a href="<?= site_url('/Projects/createProject') ?>" class="btn btn-success mb-3">Create Project</a>
     <?php endif; ?>
 
-    <!-- Shared Modal (now minimal; JS injects the body) -->
+    <!-- Shared Modal  -->
     <div id="projectModal" class="modal" style="display:none;">
         <div class="modal-content modal--scroll">
             <button id="closeModalBtn" class="modal-close" aria-label="Close">&times;</button>

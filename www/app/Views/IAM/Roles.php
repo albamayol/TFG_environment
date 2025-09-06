@@ -77,27 +77,4 @@
         }
     </style>
 
-    <script>
-        // Add an input box above the table for searching by name/email
-        document.addEventListener('DOMContentLoaded', function() {
-            const container = document.querySelector('.container');
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.placeholder = 'Search by name or email...';
-            input.style.marginBottom = '15px';
-            input.style.width = '100%';
-            input.style.padding = '8px';
-            container.insertBefore(input, container.querySelector('table'));
-
-            input.addEventListener('input', function() {
-                const filter = input.value.toLowerCase();
-                const rows = document.querySelectorAll('#usersTable tbody tr');
-                rows.forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(filter) ? '' : 'none';
-                });
-            });
-        });
-    </script>
-
 <?= $this->endSection() ?>

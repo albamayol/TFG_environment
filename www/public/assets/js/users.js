@@ -1,7 +1,4 @@
 (function () {
-  // Uses globally-available csrf() and updateCsrfFromResponse(json)
-  // provided by your base layout via <meta csrf-token-name> + <meta csrf-token>.
-
     function csrf() {
         const name = document.querySelector('meta[name="csrf-token-name"]')?.content;
         const hash = document.querySelector('meta[name="csrf-token"]')?.content;
@@ -37,17 +34,16 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
-        body: JSON.stringify(csrf())   // <- EXACTLY like your task delete/state update
+        body: JSON.stringify(csrf())   
         })
         .then(r => r.json().catch(() => ({})))
         .then(json => {
-        updateCsrfFromResponse(json);  // <- keep tokens fresh for next actions
+        updateCsrfFromResponse(json);  
 
         if (json?.ok) {
-            //If success: remove row
+            //If success, remove row
             if (row && row.parentNode) row.parentNode.removeChild(row);
         } else {
-            // show server error (mirrors your task flow)
             alert(json?.error || 'Delete failed');
             deleteButton.disabled = previousDisabled;
         }

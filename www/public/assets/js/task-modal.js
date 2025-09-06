@@ -70,7 +70,7 @@
     document.body.style.overflow = 'hidden';
   });
 
-  //Change state (delegated, works for cards rendered anywhere)
+  //Change state 
   document.addEventListener('change', (e) => {
     const select = e.target.closest('.state-select');
     if (!select) return;
@@ -90,9 +90,8 @@
       return res.json();
     })
     .then(json => {
-      updateCsrfFromResponse(json);           // <—— CRITICAL LINE
+      updateCsrfFromResponse(json);          
 
-      // keep existing badge update, but DON'T overwrite className:
       const card = select.closest('.task-card');
       if (card) {
         const badge = card.querySelector('.state-badge') || card.querySelector('.task-header .badge');
