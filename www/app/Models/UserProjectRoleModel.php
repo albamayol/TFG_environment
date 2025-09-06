@@ -38,6 +38,10 @@ class UserProjectRoleModel extends Model {
         return $this->where('id_project', $projectId)->findAll();
     }
 
+    public function getProjectIdsByUserId(int $userId): array {
+        return $this->where('id_user', $userId)->findAll();
+    }
+
     public function isUserInProject(int $userId, int $projectId): bool {
         return $this->where('id_user', $userId)
                 ->where('id_project', $projectId)
@@ -45,5 +49,31 @@ class UserProjectRoleModel extends Model {
                 ->limit(1)
                 ->get()
                 ->getNumRows() > 0;
-    }           
+    }   
+    
+    public function getUserEmailsByProjectId(int $projectId): array {
+        return $this->select('Usuario.id_user, Usuario.email')
+            ->join('Usuario', 'Usuario.id_user = user_project_role.id_user')
+            ->where('user_project_role.id_project', $projectId)
+            ->groupBy('Usuario.id_user, Usuario.email')
+            ->get()
+            ->getResultArray();
+    }
+
+    /**
+     * Participants of every project the given user participates in
+     * (useful for Heads of Team).
+     */
+    public function getParticipantsEmailsForUserProjects(int $userId): array {
+        return $this->select('Usuario.id_user, Usuario.email')
+            ->join('Usuario', 'Usuario.id_user = user_project_role.id_user')
+            ->whereIn('user_project_role.id_project', function($b) use ($userId) {
+                return $b->select('id_project')
+                        ->from($this->table)
+                        ->where('id_user', $userId);
+            })
+            ->groupBy('Usuario.id_user, Usuario.email')
+            ->get()
+            ->getResultArray();
+    }
 }       

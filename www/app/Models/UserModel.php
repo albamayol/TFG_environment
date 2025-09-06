@@ -124,6 +124,21 @@ class UserModel extends Model {
     public function findByEmail(string $email) {
             return $this->where('email', $email)->first();
     }
+    public function findById(string $id) {
+            return $this->where('id_user', $id)->get()->getResultArray();
+    }
+
+    public function getSmallInfoForDisplay() {
+        return $this->select('id_user, name, email, surnames')
+                ->get()
+                ->getResultArray();
+    }
+    public function getSmallInfoForDisplayById(string $id) {
+        return $this->select('id_user, name, email, surnames')
+                ->where('id_user', $id)
+                ->get()
+                ->getResultArray();
+    }
 
     public function getUsersForIAM() {
         $users = $this->select('id_user, name, surnames, email, simulated')->findAll();
@@ -147,6 +162,10 @@ class UserModel extends Model {
             return 'Worker';
         }
         return null;
+    }
+
+    public function isRole($role, $id) {
+        return $this->getRole($id) === $role;
     }
 
     public function getAllHeadsOfTeam(): array {

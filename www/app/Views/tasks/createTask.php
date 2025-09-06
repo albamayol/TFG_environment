@@ -65,8 +65,8 @@
 
     <div class="form-group">
         <label for="id_project">Assign Task to Project</label>
-        <select id="id_project" name="id_project" class="form-control">
-            <option value="">Individual (no project)</option>
+        <select id="id_project" name="id_project" class="form-control" data-users-url="<?= site_url('Tasks/usersForProject') ?>">
+            <option value="">(no project)</option>
             <?php foreach ($projects as $project): ?>
                 <option value="<?= esc($project['id_project']) ?>">
                     <?= esc($project['name']) ?> - <?= esc($project['description']) ?>
@@ -112,20 +112,29 @@ document.addEventListener('DOMContentLoaded', function () {
     const userSelect     = document.getElementById('assigned_user');
     const individualCb   = document.getElementById('individual');
     const selfUserId     = '<?= esc($selfUserId) ?>';
+    const usersBaseUrl   = projectSelect.dataset.usersUrl;
 
     function loadUsers(projectId) {
+        const url = usersBaseUrl + (projectId ? '/' + projectId : '');
         // Fetch users for the selected project via AJAX
-        fetch('/tasks/users-for-project/' + (projectId || 0))
-            .then(res => res.json())
+        fetch(url, {
+            headers: {
+                'Accept': 'application/json'
+            }
+        })  .then(res => res.json())
             .then(data => {
                 // Clear and repopulate the user select
                 userSelect.innerHTML = '<option value="">-- Select User --</option>';
                 data.forEach(u => {
                     const opt = document.createElement('option');
                     opt.value = u.id_user;
-                    opt.textContent = u.name + ' ' + u.surnames;
+                    opt.textContent = u.email || '';
                     userSelect.appendChild(opt);
                 });
+                // If the currently selected user isn't in this project, clear it
+                if (![...userSelect.options].some(o => o.value === userSelect.value)) {
+                    userSelect.value = '';
+                }
             })
             .catch(() => {
                 // On error, leave existing options
@@ -133,19 +142,18 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     projectSelect.addEventListener('change', function () {
-        const projectId = this.value;
-        loadUsers(projectId);
+        if (!individualCb.checked) loadUsers(this.value);
     });
 
     individualCb.addEventListener('change', function () {
-        if (this.checked) {
-            // If individual task, clear assignment and disable the worker list
-            userSelect.value = '';
-            userSelect.disabled = true;
-        } else {
-            userSelect.disabled = false;
-        }
+        userSelect.disabled = this.checked;
+        if (this.checked) userSelect.value = '';
+        else loadUsers(projectSelect.value);
     });
+
+    // Init
+    userSelect.disabled = individualCb.checked;
+    if (!individualCb.checked) loadUsers(projectSelect.value);
 });
 </script>
 
