@@ -79,7 +79,6 @@ class Tasks extends BaseController {
         $tasksLaterRanged = $this->taskModel->getTasksForUserFromDate($userId, $weekEnd->toDateTimeString());
         $tasksLaterNoDate = $this->taskModel->getTasksForUserWithNoLimitDate($userId);
 
-        // Merge "later" task arrays and ensure uniqueness by id_task
         $tasksLater = $this->uniqueByIdTask(array_merge($tasksLaterRanged, $tasksLaterNoDate));
 
         $tasksExpired = $this->taskModel->getOverdueTasksForUser($userId);
@@ -92,27 +91,23 @@ class Tasks extends BaseController {
         $currentUser = $this->userModel->find((int) session('id_user'));
         $data['currentUserEmail'] = $currentUser['email'] ?? null;
 
-        //merge all tasks arrays (all columns) into a single 'task' one to load it into the view
         $data['tasks'] = $this->decorateForDisplay(array_merge($tasksToday, $tasksWeek, $tasksLater, $tasksExpired));
 
         return view('/Tasks/MyTasks', $data);
     }
 
      /**
-     * Show the "Create Task" form to privileged users.
+     * Show the "Create Task" form to privileged users
      */
     public function create() {
         $userId = session()->get('id_user');
 
-        //Check if the user's role allows task creation
         if (! $this->canCreateTasks($userId)) {
             return redirect()->to('/Tasks/MyDay')->with('error', 'Unauthorized');
         }
 
-        //Get projects this user participates in
         $projects = $this->projectModel->getProjectsForUser($userId);
 
-        // Fetch the initial list of users:
         // If the user is a manager/profile admin, get all users.
         // If the user is a head of team, get participants of their projects.
         $users = $this->tasksUsersModel->getUsersForUserRole($userId);
@@ -125,7 +120,7 @@ class Tasks extends BaseController {
     }
 
     /**
-     * Save the task to the database and assign users.
+     * Save the task to the database and assign users
      */
     public function save() {
         helper('datetime');
@@ -162,7 +157,6 @@ class Tasks extends BaseController {
             $limitDateUtc = fromUserTimezone($tmpDate); //returns 'Y-m-d H:i:s' in UTC
         }
 
-        //Obtain POST fields
         $name        = $this->request->getPost('name');
         $description = $this->request->getPost('description');
         $priority    = $this->request->getPost('priority') ?? 'Medium';
@@ -181,11 +175,9 @@ class Tasks extends BaseController {
             }
         }
 
-        //get user email from session
         $user = $this->userModel->find($userId);
         $userEmail = $user ? $user['email'] : '';
 
-        //Build task data
         $taskData = [
             'id_project'      => $projectId,
             'name'            => $name,
@@ -199,10 +191,8 @@ class Tasks extends BaseController {
             'simulated'       => $simulated,
         ];
 
-        //Save task (insert)
         $taskId = $this->taskModel->insert($taskData);
 
-        //If individual is checked OR no user selected, assign to self.
         if ($isIndividual || empty($assignedId)) {
             $this->tasksUsersModel->assignUserToTask($userId, $taskId, 'Owner');
         } else {
@@ -219,13 +209,13 @@ class Tasks extends BaseController {
     public function usersForProject($projectId = null) {
         $userId = session()->get('id_user');
 
-        //Use ID 0 or null to indicate "no project selected"
+        //ID 0 or null to indicate "no project selected"
         $projectId = empty($projectId) ? null : (int) $projectId;
 
         if ($projectId) {
             $users = $this->tasksUsersModel->getUsersByProjectId($projectId);
         } else {
-            //No project selected: return all possible users for current user role
+            //No project selected --> return all possible users for current user role
             $users = $this->tasksUsersModel->getUsersForUserRole($userId);
         }
 
@@ -233,18 +223,14 @@ class Tasks extends BaseController {
     }
 
     /**
-     * Determine if the current user can create tasks.
+     * if the current user can create tasks
      */
     private function canCreateTasks(int $userId): bool {
-        $db = \Config\Database::connect();
-        return
-            $db->table('Profile_Admin')->where('id_prof_admin', $userId)->countAllResults() > 0 ||
-            $db->table('Manager')->where('id_manager', $userId)->countAllResults() > 0 ||
-            $db->table('Head_of_Team')->where('id_head_of_team', $userId)->countAllResults() > 0;
+        return in_array(session('role_name'), ['Manager', 'Head_Of_Team']);
     }
 
     private function decorateForDisplay(array $tasks, string $fmt = 'Y-m-d H:i'): array {
-        helper('datetime'); // ensures toUserTimezone() is available
+        helper('datetime'); 
         return array_map(function ($t) use ($fmt) {
             $utc = $t['limit_date'] ?? null;
             $t['limit_date_display'] = $utc ? toUserTimezone($utc, $fmt) : null;
@@ -253,7 +239,7 @@ class Tasks extends BaseController {
     }
 
     /**
-     * Helper: unique by id_task while preserving order.
+     * unique by id_task while maintaining order.
      */
     private function uniqueByIdTask(array $tasks): array {
         $seen = [];
@@ -281,14 +267,12 @@ class Tasks extends BaseController {
             return $this->response->setStatusCode(422)->setJSON(['error' => 'Invalid state']);
         }
 
-        // TODO: authorize the user owns/can edit this task
         $ok = $this->taskModel->update($id, ['state' => $state]);
 
         if (!$ok) {
             return $this->response->setStatusCode(500)->setJSON(['error' => 'DB update failed']);
         }
 
-        //also return a fresh CSRF token if you rotate per-request
         return $this->response->setJSON([
             'ok'   => true,
             'id'   => (int)$id,
@@ -335,7 +319,6 @@ class Tasks extends BaseController {
             ]);
         }
 
-        // success (return new CSRF for your AJAX flow)
         return $this->response->setStatusCode(200)->setJSON([
             'ok'   => true,
             'csrf' => ['name' => csrf_token(), 'hash' => csrf_hash()],

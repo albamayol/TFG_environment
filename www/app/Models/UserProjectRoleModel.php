@@ -2,22 +2,14 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
-use App\Models\ProjectModel;
 
 class UserProjectRoleModel extends Model {
     protected $table      = 'user_project_role';
-    protected $primaryKey = false; // clave compuesta
+    protected $primaryKey = false; 
     protected $allowedFields = ['id_user', 'id_role', 'id_project'];
 
     protected $returnType = 'array';
     protected $useAutoIncrement = true;
-
-    protected $projectModel;
-
-    public function __construct() {
-        parent::__construct();
-        $this->projectModel = new ProjectModel();
-    }
 
     public function assignRole(int $userId, int $roleId, int $projectId) {
         return $this->insert([
@@ -60,10 +52,6 @@ class UserProjectRoleModel extends Model {
             ->getResultArray();
     }
 
-    /**
-     * Participants of every project the given user participates in
-     * (useful for Heads of Team).
-     */
     public function getParticipantsEmailsForUserProjects(int $userId): array {
         return $this->select('Usuario.id_user, Usuario.email')
             ->join('Usuario', 'Usuario.id_user = user_project_role.id_user')

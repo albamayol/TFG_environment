@@ -11,7 +11,7 @@ class Timezone extends Controller
         if ($tz) {
             session()->set('user_timezone', $tz);
         }
-        // If CSRF is enabled with regeneration, you can return the fresh token:
+        // If CSRF is enabled with regeneration, return the fresh token
         return $this->response->setJSON([
             'ok' => true,
             'csrf' => [

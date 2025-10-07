@@ -16,7 +16,7 @@ class PasswordRules
             $val = $data[$name] ?? '';
             if ($val === '') continue;
 
-            // email: también prueba con la parte local (antes de @)
+            // email
             $candidates = [$val];
             if ($name === 'email') {
                 $local = strstr($val, '@', true);

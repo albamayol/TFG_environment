@@ -19,18 +19,18 @@ $routes->get('/Profile', 'Profile::show', ['filter' => 'auth']);
 $routes->group('/Tasks', ['filter' => 'auth'], function($routes) {
     $routes->get('MyDay', 'Tasks::myDay');      //any logged-in user
     $routes->get('MyTasks', 'Tasks::myTasks');  // any logged-in user
-    $routes->get('createTask', 'Tasks::create', ['filter' => 'role:Profile_Admin,Manager,Head_Of_Team']);
-    $routes->post('store', 'Tasks::save', ['filter' => 'role:Profile_Admin,Manager,Head_Of_Team']);
+    $routes->get('createTask', 'Tasks::create', ['filter' => 'role:Manager,Head_Of_Team']);
+    $routes->post('store', 'Tasks::save', ['filter' => 'role:Manager,Head_Of_Team']);
     $routes->post('updateState/(:num)', 'Tasks::updateState/$1'); //(ownership check in controller)
-    $routes->post('delete/(:num)', 'Tasks::delete/$1', ['filter' => 'role:Profile_Admin,Manager,Head_Of_Team']);  
-    $routes->get('usersForProject', 'Tasks::usersForProject', ['filter' => 'role:Profile_Admin,Manager,Head_Of_Team']);
-    $routes->get('usersForProject/(:num)', 'Tasks::usersForProject/$1', ['filter' => 'role:Profile_Admin,Manager,Head_Of_Team']);
+    $routes->post('delete/(:num)', 'Tasks::delete/$1', ['filter' => 'role:Manager,Head_Of_Team']);  
+    $routes->get('usersForProject', 'Tasks::usersForProject');
+    $routes->get('usersForProject/(:num)', 'Tasks::usersForProject/$1');
 });
 
 $routes->group('/Projects', ['filter' => 'auth'], function($routes) {
     $routes->get('MyProjects', 'Projects::showMyProjects');
-    $routes->get('createProject', 'Projects::create', ['filter' => 'role:Profile_Admin,Manager']);
-    $routes->post('store', 'Projects::save', ['filter' => 'role:Profile_Admin,Manager']);
+    $routes->get('createProject', 'Projects::create', ['filter' => 'role:Manager']);
+    $routes->post('store', 'Projects::save', ['filter' => 'role:Manager']);
     $routes->post('updateState/(:num)', 'Projects::updateState/$1', ['filter' => 'role:Manager,Head_Of_Team']);
     $routes->get('matrix/(:num)', 'Projects::matrixTasksUsers/$1');  //everyone can see the tasks of their projects and their assignees
 });

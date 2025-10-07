@@ -15,17 +15,14 @@ function toUserTimezone($utcDate, string $format = 'Y-m-d H:i:s'): string {
 }
 
 /**
- * Return the user’s timezone from the session, defaulting to UTC.
+ * Return the user’s timezone from the session, defaulting to UTC
  */
 function getUserTimezone(): string {
     return session()->get('user_timezone') ?? 'UTC';
 }
 
 /**
- * Convert a datetime string typed in the user’s local timezone to a UTC datetime string.
- *
- * Example: if the form sends "2025-08-25 15:30" and the user’s tz is Europe/Madrid,
- * this will return the equivalent UTC timestamp (2025-08-25 13:30:00).
+ * Convert a datetime string typed in the user’s local timezone to a UTC datetime string
  */
 function fromUserTimezone(string $localDate, string $format = 'Y-m-d H:i:s'): string {
     if (empty($localDate)) {
@@ -36,7 +33,7 @@ function fromUserTimezone(string $localDate, string $format = 'Y-m-d H:i:s'): st
 }
 
 /**
- * Get the current time in UTC as a CodeIgniter Time object.
+ * Get the current time in UTC as a CodeIgniter Time object
  */
 function utcNow(): Time {
     return Time::now('UTC');
@@ -45,9 +42,7 @@ function utcNow(): Time {
 /**
  * Get the start and end of the current UTC day as Time objects.
  *
- * Returns an array like [$start, $end], where $start is 00:00:00 UTC and
- * $end is 00:00:00 UTC on the following day. Use these to bucket tasks by date
- * without depending on the viewer’s timezone.
+ * Returns an array like [$start, $end], where $start is 00:00:00 UTC and $end is 00:00:00 UTC on the following day
  */
 function getUtcDayBounds(): array {
     $now = utcNow();

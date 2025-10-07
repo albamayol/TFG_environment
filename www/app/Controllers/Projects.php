@@ -4,7 +4,6 @@ namespace App\Controllers;
 
 use App\Models\ProjectModel;
 use App\Models\UserProjectRoleModel;
-use App\Models\TaskModel;
 use App\Models\UserModel;
 use App\Models\RoleModel;
 use App\Models\TasksUsersModel;
@@ -14,13 +13,11 @@ class Projects extends BaseController {
     protected $userModel;
     protected $roleModel;
     protected $userProjectRoleModel;
-    protected $taskModel;
     protected $tasksUsersModel;
 
     public function __construct() {
         $this->projectModel = new ProjectModel();
         $this->userProjectRoleModel = new UserProjectRoleModel();
-        $this->taskModel = new TaskModel();
         $this->userModel = new UserModel();
         $this->roleModel = new RoleModel();
         $this->tasksUsersModel = new TasksUsersModel();
@@ -38,7 +35,7 @@ class Projects extends BaseController {
 
         $projects = [
             'projects' => $this->projectModel->getProjectsForUser($userId),
-            'canCreateProject' => in_array(session('role_name'), ['Profile_Admin', 'Manager']),
+            'canCreateProject' => in_array(session('role_name'), ['Manager']),
             'canChangeState' => in_array(session('role_name'), ['Manager', 'Head_Of_Team'])
         ];
         return view('projects/myProjects', $projects);
@@ -90,12 +87,11 @@ class Projects extends BaseController {
         $selectedWorkers = (array) $this->request->getPost('workers'); 
         $rolesMap        = (array) $this->request->getPost('roles');   
 
-        // Fetch valid role IDs to save 'in_list'
+        //Fetch valid role IDs to save 'in_list'
         $roleRows      = $this->roleModel->select('id_role')->findAll();
         $validRoleIds  = array_map('strval', array_column($roleRows, 'id_role'));
         $validRoleList = implode(',', $validRoleIds);
 
-        // Validate input
         $rules = [
             'name'  => 'required|min_length[2]',
             'description' => 'required|min_length[3]',
@@ -154,7 +150,7 @@ class Projects extends BaseController {
             'simulated' => $this->request->getPost('simulated') ? 1 : 0
         ]);
 
-        // Validate each selected worker has a role:
+        //Validate each selected worker has a role
         foreach ($selectedWorkers as $uid) {
             $roleId = $rolesMap[$uid] ?? null;
             $this->userProjectRoleModel->assignRole($uid, $roleId, $this->projectModel->getInsertID());
@@ -186,7 +182,7 @@ class Projects extends BaseController {
             return $this->response->setStatusCode(500)->setJSON(['error' => 'DB update failed']);
         }
 
-        //also return a fresh CSRF token if you rotate per-request
+        //also return a fresh CSRF token if rotate per-request
         return $this->response->setJSON([
             'ok'   => true,
             'id'   => (int)$id,

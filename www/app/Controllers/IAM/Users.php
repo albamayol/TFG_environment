@@ -31,11 +31,10 @@ class Users extends BaseController {
         return view('IAM/createUser');
     }
 
-    //store FUNCTIONALITY WILL ALLOW Profile Admins TO CREATE ACCOUNTS FOR OTHER USERS.
+    //store FUNCTIONALITY ALLOWS Profile Admins TO CREATE ACCOUNTS FOR OTHER USERS.
     public function store() {
         helper(['form']);
 
-        //normalize BEFORE setting up $data
         $rawTel = $this->request->getPost('telephone');
         $tel = $this->normalize_phone_to_e164($rawTel, 'ES');
         if ($tel === null) {
@@ -59,7 +58,6 @@ class Users extends BaseController {
             'Role' => $this->request->getPost('role') ?? 'Manager', // Default role is Manager
         ];
 
-        //Validate role
         $validRoles = ['Profile_Admin', 'Manager', 'Head_Of_Team', 'Worker'];
         $role = $this->request->getPost('role');
 
@@ -67,12 +65,11 @@ class Users extends BaseController {
             return redirect()->back()->withInput()->with('errors', ['role' => 'Invalid role selected.']);
         }
 
-        // Validate ALL fields using model validation
+        //Validate all fields
         if (! $this->userModel->validate($data)) {
             return redirect()->back()->withInput()->with('errors', $this->userModel->errors());
         }
         
-        // insert will run the model’s validationRules and validationMessages
         if ($this->userModel->insert($data)) {
             
             switch($data['Role']) {
@@ -93,15 +90,13 @@ class Users extends BaseController {
                     $workerModel->insert(['id_worker' => $this->userModel->insertID()]);
                     break;
                 default:
-                    // If an unknown role is provided, delete the created user and return an error
+                    //If unknown role provided, delete the created user and return an error
                     $this->userModel->delete($this->userModel->insertID());
                     return redirect()->back()->withInput()
                         ->with('errors', ['role' => 'Invalid role specified.']);
             }
-
-            // success: redirect to login with flash message
             return redirect()->to('IAM/Users')->with('message', 'User registered successfully');
-        } else { // failure: redirect back with the errors array from the model
+        } else { 
             return redirect()->back()->withInput()->with('errors', $this->userModel->errors()); 
         }
     }
@@ -148,8 +143,8 @@ class Users extends BaseController {
     }
 
     /**
-     * Normaliza un teléfono “amigable” a E.164 (+XXXXXXXXXXX).
-     * Devuelve null si no es válido.
+     * Normaliza un teléfono a E.164 (+XXXXXXXXXXX).
+     * Devuelve null si no válido.
      */
     private function normalize_phone_to_e164(string $input, string $defaultRegion = 'ES'): ?string {
         $util = PhoneNumberUtil::getInstance();
@@ -158,7 +153,7 @@ class Users extends BaseController {
             if (!$util->isValidNumber($proto)) {
                 return null;
             }
-            return $util->format($proto, PhoneNumberFormat::E164); // p.ej. +34600123456
+            return $util->format($proto, PhoneNumberFormat::E164); //ej: +34600123456
         } catch (NumberParseException $e) {
             return null;
         }

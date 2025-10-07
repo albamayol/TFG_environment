@@ -30,11 +30,11 @@ class Auth extends BaseController {
         return view('auth/signup');
     }
 
-    //REGISTER FUNCTIONALITY WILL ALLOW TO HAVE AN ACCOUNT FOR THE APP TO BE USED FOR PERSONAL MOTIVES.
+    //REGISTER FUNCTIONALITY --> WILL ALLOW TO HAVE AN ACCOUNT FOR THE APP TO BE USED FOR PERSONAL MOTIVES AS MANAGER BY DEFAULT.  
     public function register() {
         helper(['form']);
        
-        //normalize BEFORE setting up $data
+        //normalize telephone
         $rawTel = $this->request->getPost('telephone');
         $tel = $this->normalize_phone_to_e164($rawTel, 'ES');
         if ($tel === null) {
@@ -54,34 +54,29 @@ class Auth extends BaseController {
             'telephone' => $tel,
             'soft_skills' => $this->request->getPost('soft_skills'),
             'technical_skills' => $this->request->getPost('technical_skills'),
-            'simulated' => 0, // Default value for simulated
+            'simulated' => 0, // Default value for simulated (false)
             'Role' => 'Manager', // Default role is Manager
         ];
         
-        // insert will run the model’s validationRules and validationMessages
+        //the insert runs the model’s validationRules and validationMessages
         if ($this->userModel->insert($data)) {
-            
-            // Grab the auto‑generated id_user
             $newUserId = $this->userModel->insertID();
             $this->managerModel->insert(['id_manager' => $newUserId]);
 
-            // success: redirect to login with flash message
             return redirect()->to('/')->with('message', 'User registered successfully');
-        } else { // failure: redirect back with the errors array from the model
+        } else { 
             return redirect()->back()->withInput()->with('errors', $this->userModel->errors());
         }
     }
 
     public function attempt() {
-        // Detect AJAX/JSON
-        $isAjax = $this->request->isAJAX()
-                  || stripos($this->request->getHeaderLine('Content-Type'), 'application/json') !== false;
+        //Detect AJAX/JSON
+        $isAjax = $this->request->isAJAX() || stripos($this->request->getHeaderLine('Content-Type'), 'application/json') !== false;
 
-        // Accept either form-encoded (non-AJAX) or JSON (AJAX)
+        //Accept either form-encoded (non-AJAX) or JSON (AJAX)
         $email = trim((string) ($this->request->getPost('email') ?? ($this->request->getJSON(true)['email'] ?? '')));
         $pass  = (string) ($this->request->getPost('password') ?? ($this->request->getJSON(true)['password'] ?? ''));
 
-        // First Basic validation
         if ($email === '' || $pass === '') {
             return $isAjax
                 ? $this->jsonLoginError('Email and password are required')
@@ -109,7 +104,7 @@ class Auth extends BaseController {
                 : redirect()->back()->with('error', 'Invalid Credentials');
         }
 
-        // Get the user's role
+        //Get the user's role
         $role = $this->userModel->getRole($user['id_user']);
         $user['role_name'] = $role;
 
@@ -149,8 +144,8 @@ class Auth extends BaseController {
     }
 
     /**
-     * Normaliza un teléfono “amigable” a E.164 (+XXXXXXXXXXX).
-     * Devuelve null si no es válido.
+     * Normaliza un teléfono a E.164 (+XXXXXXXXXXX).
+     * Devuelve null si no válido.
      */
     private function normalize_phone_to_e164(string $input, string $defaultRegion = 'ES'): ?string {
         $util = PhoneNumberUtil::getInstance();
@@ -159,7 +154,7 @@ class Auth extends BaseController {
             if (!$util->isValidNumber($proto)) {
                 return null;
             }
-            return $util->format($proto, PhoneNumberFormat::E164); // p.ej. +34600123456
+            return $util->format($proto, PhoneNumberFormat::E164); //ej: +34600123456
         } catch (NumberParseException $e) {
             return null;
         }

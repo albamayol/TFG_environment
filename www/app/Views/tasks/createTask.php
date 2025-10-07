@@ -3,12 +3,7 @@
  * View: Create Task
  *
  * Only users with roles Profile_Admin, Manager, or Head_of_Team can access this page.
- * The controller must provide:
- *   - $projects: array of available projects (filtered by role)
- *       each element: ['id_project', 'name', 'description']
- *   - $users: array of all users or project participants depending on the role
- *       each element: ['id_user', 'name', 'surnames']
- *   - $selfUserId: the ID of the current user (used for individual tasks)
+ * 
  */
 ?>
 <?= $this->extend('layouts/main') ?>

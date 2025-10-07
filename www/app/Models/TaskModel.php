@@ -51,7 +51,7 @@ class TaskModel extends Model {
     }
 
     /**
-     * Return all tasks assigned to a specific user.
+     * Return all tasks assigned to a specific user
      */
     public function getTasksForUser(int $userId): array
     {
@@ -64,7 +64,7 @@ class TaskModel extends Model {
     }
 
     /**
-     * Return tasks assigned to a user with limit_date within a specific range.
+     * Return tasks assigned to a user with limit_date within a specific range
      */
     public function getTasksForUserInRange(int $userId, string $startDate, string $endDate): array
     {
@@ -79,7 +79,7 @@ class TaskModel extends Model {
     }
 
     /**
-     * Return tasks assigned to a user that are past their limit_date and not marked as Done.
+     * Return tasks assigned to a user that are past their limit_date and not marked as Done
      */
     public function getOverdueTasksForUser(int $userId): array {
         $builder = $this->select('Task.*')
@@ -94,7 +94,7 @@ class TaskModel extends Model {
 
     
     /**
-     * New: tasks without a limit_date (for "Later" bucket).
+     * tasks without a limit_date (for "Later")
      */
     public function getTasksForUserWithNoLimitDate(int $userId): array
     {
@@ -109,7 +109,7 @@ class TaskModel extends Model {
     }
 
      /**
-     * Return today’s tasks for a user.
+     * Return today’s tasks for a user
      */
     public function getTodayTasksForUser(int $userId): array {
         [$start, $end] = getUtcDayBounds();
@@ -158,7 +158,7 @@ class TaskModel extends Model {
         $db = $this->db;
         $db->transStart();
 
-        // clear links first (FKs commonly RESTRICT)
+        // clear links first
         $db->table('tasks_users')->where('id_task', $taskId)->delete();
         // delete the task
         $this->delete($taskId);

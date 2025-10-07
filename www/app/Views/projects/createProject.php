@@ -44,7 +44,6 @@
         <input type="datetime-local" id="end_date" name="end_date" class="form-control">
     </div>
     
-    <!--Required -->
     <div class="form-group">
         <label>Assign Head of Team for the Project</label>
         <div class="hot-box">
@@ -73,7 +72,6 @@
         </div>
     </div>
 
-    <!--Required -->
     <div class="form-group">
         <label>Assign Workers to the Project with their Roles</label>
         <div class="workers_and_roles-box">

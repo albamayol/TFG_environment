@@ -12,30 +12,27 @@ class RoleFilter implements FilterInterface {
 
         $session = session();
 
-        // 1) Must be logged in first.
-        //    If not, redirect them to login (and set a flash message).
+        //Must be logged in first
         if (!$session->get('logged_in')) {
             return redirect()->to('/')->with('error', 'Debes iniciar sesión primero.'); // Redirigir a la página de inicio de sesión si no hay sesión
         }
         
-        // 2) Read the current user's single role from the session.
-        //    Ex: 'Profile_Admin' | 'Manager' | 'Head_Of_Team' | 'Worker'
+        //Read the current user's role from the session
         $userRole = $session->get('role_name') ?? '';
 
-        // 3) The $arguments come from routes (role:admin,manager,head_of_team).
-        //    CI4 passes them as an array already, but we’ll be defensive.
+        //The $arguments come from routes (role:admin,manager,head_of_team)
         $allowed = is_array($arguments) ? $arguments : [];
 
-        // 4) If no arguments were provided, "role" filter just means "must be logged in".
+        //If no arguments provided, "role" filter just means "must be logged in"
         if ($allowed === []) {
-            return; // allowed
+            return; //allowed
         }
-        // Allow if user's role is in the allowed list
+        //Allow if user's role is in the allowed list
         if (in_array($userRole, $allowed, true)) {
-            return; // allow
+            return; //allow
         }
 
-        // Deny: tailor response for AJAX vs normal
+        //Deny
         $isAjax = $request->isAJAX() ||
                   stripos($request->getHeaderLine('Accept'), 'application/json') !== false;
 
@@ -45,7 +42,7 @@ class RoleFilter implements FilterInterface {
                 ->setJSON(['success' => false, 'error' => 'Acceso denegado']);
         }
 
-        // HTML 403 page (make sure errors/html/error_403 exists)
+        //HTML 403 page
         return service('response')
             ->setStatusCode(403)
             ->setBody(view('errors/html/error_403'));

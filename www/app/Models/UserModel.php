@@ -26,7 +26,6 @@ class UserModel extends Model {
     
     protected $useAutoIncrement = true;
     
-    //The fields allowed for insert and update operations are specified (`$allowedFields`). 
     protected $allowedFields = [
         'name', 'surnames', 'email', 'password', 'birthdate', 'address',
         'dni_nie', 'telephone', 'soft_skills', 'technical_skills', 'simulated'
@@ -37,13 +36,12 @@ class UserModel extends Model {
 
     protected function hashPassword(array $data): array {
         if (isset($data['data']['password'])) {
-            // Evita doble hash si te llega ya hasheada por cualquier motivo
+            //Evita doble hash
             $info = password_get_info($data['data']['password']);
             if (($info['algo'] ?? 0) === 0) {
                 $data['data']['password'] = password_hash($data['data']['password'], PASSWORD_BCRYPT);
             }
         }
-        // No guardes repeated_password (ya no está en $allowedFields, pero por si acaso)
         unset($data['data']['repeated_password']);
         
         log_message('debug', 'hashPassword callback fired');

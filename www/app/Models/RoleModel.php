@@ -9,14 +9,6 @@ class RoleModel extends Model {
 
     protected $allowedFields = ['name', 'description', 'skills', 'simulated'];
 
-    public function getActionsByRole(int $roleId) {
-        return $this->db->table('role_actions')
-            ->select('Action.*')
-            ->join('Action', 'Action.id_actions = role_actions.id_actions')
-            ->where('role_actions.id_role', $roleId)
-            ->get()->getResultArray();
-    }
-
     public function assignActionToRole(int $roleId, int $actionId) {
         $roleAction = new RoleActionsModel();
         return $roleAction->addActionToRole($actionId, $roleId);
