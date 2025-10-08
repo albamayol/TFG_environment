@@ -1,4 +1,8 @@
 *Refer to README.md in this same directory for further and more detailed information*
+<p align="center">
+  <em>📚 Need more details?</em><br>
+  🔗 Visit the <a href="./README.md"><b>Extended Documentation</b></a> for advanced configuration, usage, and troubleshooting.
+</p>
 
 ## Instrucciones de interacción con la aplicación
 
