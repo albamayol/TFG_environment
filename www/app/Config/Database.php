@@ -49,6 +49,10 @@ class Database extends Config
             'datetime' => 'Y-m-d H:i:s',
             'time'     => 'H:i:s',
         ],
+        'initCommands' => [
+            "SET time_zone = '+00:00'",
+            "SET SESSION sql_mode = CONCAT(@@sql_mode, ',STRICT_TRANS_TABLES')",
+        ],
     ];
 
     //    /**

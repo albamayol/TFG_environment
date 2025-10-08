@@ -34,6 +34,9 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
+        'auth'          => \App\Filters\AuthFilter::class,
+        'role'          => \App\Filters\RoleFilter::class,
+        'loadUserTz'    => \App\Filters\LoadUserTimezoneFilter::class,
     ];
 
     /**
@@ -70,12 +73,15 @@ class Filters extends BaseFilters
     public array $globals = [
         'before' => [
             // 'honeypot',
-            // 'csrf',
+            'csrf',
+            'loadUserTz', // Load user timezone from cookie if not in session
             // 'invalidchars',
         ],
         'after' => [
             // 'honeypot',
             // 'secureheaders',
+            'toolbar',
+
         ],
     ];
 
