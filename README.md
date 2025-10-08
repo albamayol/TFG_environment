@@ -108,11 +108,11 @@ git clone https://github.com/albamayol/TFG_environment
 cd TFG_environment
 ```
 3. **Install the dependencies**
-    - Using Docker
+  - Using Docker
 ```bash
-        docker build -t albamayol/TFG_environment .
+docker build -t albamayol/TFG_environment .
 ```
-    - Using Composer
+  - Using Composer
 ```bash
-        composer install
+composer install
 ```  
