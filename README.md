@@ -3,8 +3,6 @@
   🔗 Visit the <a href="./README_Detailed.md"><b>Extended Documentation</b></a> for advanced configuration, usage, and troubleshooting.
 </p>
 
-## Instrucciones de interacción con la aplicación
-
 <h1 align="center">TFG_ENVIRONMENT</h1>
 
 <h1 align="center">Aplicativo de planificación y organización integral adaptado a entornos empresariales y personales. </h1>
