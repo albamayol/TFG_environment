@@ -45,9 +45,25 @@
 
 ## 🧩 Overview
 
-**TFG_environment** is a comprehensive, Docker-based development setup designed for **PHP applications**.  
-It ensures consistent, containerized environments for local development, testing, and deployment — integrating essential dependencies, extensions, and tools like **WKHTMLTOPDF** and **XDebug**.
+**TFG_environment** 
+This project consists of the development of a web application aimed at planning and managing 
+tasks, activities, and staff, designed for both business and individual use. The tool allows users 
+to create, assign, and track tasks, including information such as status, priority, deadlines, and 
+duration, as well as linking them to specific projects and users. It also includes a user 
+management system with different roles, ensuring differentiated access to functionalities 
+depending on each person’s profile. 
+The project seeks to provide a practical and accessible solution to improve the organization of 
+daily work, whether within a company that requires greater organization and/or traceability in 
+its processes, or for an individual user who wants to maintain personal control over their 
+activities. As a distinctive element, the application incorporates a simulation module that 
+allows fictitious scenarios to be recreated, in order to anticipate workloads and foresee 
+incidents without altering real data. Overall, it is a proposal that brings together project 
+planning, user management, and task control in a single environment, in a clear and simple 
+way. 
 
+**Keywords:**
+*task management, personal productivity, project planning software, user 
+management system, activity management and business web application.*
 ---
 
 ### 💡 Why TFG_environment?
