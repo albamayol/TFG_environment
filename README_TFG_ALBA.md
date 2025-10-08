@@ -1,105 +1,82 @@
-*Refer to README.md in this same directory for further and more detailed information*
-<p align="center">
-  <em>📚 Need more details?</em><br>
-  🔗 Visit the <a href="./README.md"><b>Extended Documentation</b></a> for advanced configuration, usage, and troubleshooting.
-</p>
+# Local Environment
+> Using Docker for our Devinet's local environment
 
-## Instrucciones de interacción con la aplicación
+## Requirements
 
-<h1 align="center">TFG_ENVIRONMENT</h1>
+1. Having [Docker installed](https://www.docker.com/products/docker-desktop) (you will need to create a Hub account)
+2. Having [Git installed](https://git-scm.com/downloads)
 
-<h1 align="center">Aplicativo de planificación y organización integral adaptado a entornos empresariales y personales. </h1>
-<h3 align="center">Autor: Alba Mayol Lozano | alba.mayol@students.salle.url.edu</h3>
+## Installation
 
-<p align="center">
-    <em>Escuela Técnica Superior de Ingeniería La Salle</em>
-    <em>Trabajo de Fin de Grado </em>
-    <em>Grado en Ingeniería Informática</em>
-</p>
+1. Clone this repository into your projects folder using the `git clone` command.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/last%20commit-september-555555?style=flat-square" alt="Last Commit">
-  <img src="https://img.shields.io/badge/php-95.2%25-blue?style=flat-square" alt="PHP">
-  <img src="https://img.shields.io/badge/languages-5-brightgreen?style=flat-square" alt="Languages">
-</p>
+## Instructions
 
----
+1. After cloning the project, open your terminal and access the root folder using the `cd /path/to/the/folder` command.
+2. Edit the `.env` file with the desired information for your project. Do not forget to edit the line `12` with the name of the architecture that you are using. The available platform architectures are: `linux/amd64`, `linux/arm/v7`, `linux/arm64`.
+3. To create the app image, execute the command `docker compose build app` in your terminal.
+4. Once it has been created, execute the command `docker compose up -d` in your terminal to run your local environment.
 
-### 🛠️ Built with the tools and technologies:
+**Note:** The first time you run this command it will take some time because it will download all the required images from the Hub.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white" />
-  <img src="https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white" />
-  <img src="https://img.shields.io/badge/JSON-000000?style=flat&logo=json&logoColor=white" />
-  <img src="https://img.shields.io/badge/Markdown-000000?style=flat&logo=markdown&logoColor=white" />
-  <img src="https://img.shields.io/badge/Composer-885630?style=flat&logo=composer&logoColor=white" />
-  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black" />
-  <img src="https://img.shields.io/badge/Nginx-009639?style=flat&logo=nginx&logoColor=white" />
-  <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white" />
-  <img src="https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white" />
-  <img src="https://img.shields.io/badge/phpMyAdmin-6C78AF?style=flat&logo=phpmyadmin&logoColor=white" />
-  <img src="https://img.shields.io/badge/PHP-777BB4?style=flat&logo=php&logoColor=white" />
-  <img src="https://img.shields.io/badge/YAML-CB171E?style=flat&logo=yaml&logoColor=white" />
-</p>
+At this point, if you execute the command `docker compose ps` you should see a total of 6 containers running (this table is using the default ports of each service. Those values should be configured in the `.env` file):
 
----
-
-## 🧩 Overview
-
-**TFG_environment** is a comprehensive, Docker-based development setup designed for **PHP applications**.  
-It ensures consistent, containerized environments for local development, testing, and deployment — integrating essential dependencies, extensions, and tools like **WKHTMLTOPDF** and **XDebug**.
-
----
-
-### 💡 Why TFG_environment?
-
-This project simplifies the complexities of setting up a PHP environment by providing a ready-to-use, orchestrated architecture.  
-The core features include:
-
-- 🐳 **Containerized PHP Runtime:** Tailored for PHP 8.4.3 with necessary libraries and extensions.  
-- 🌐 **Multi-Service Orchestration:** Seamlessly manages web server, database, and application services via Docker Compose.  
-- 🧪 **Development & Testing Support:** Built-in configurations for unit testing, CLI commands, and environment customization.  
-- 🔒 **Security & Performance:** Implements access restrictions, PHP preloading, and caching for optimized workflows.  
-- 🚀 **Developer-Friendly:** Facilitates efficient local development, debugging, and deployment with minimal setup.  
-
----
-
-<p align="center">
-  <em>📦 Designed for developers who value speed, consistency, and simplicity.</em>
-</p>
-
----
-
-## 🚀 Getting Started
-
-### 📋 Prerequisites
-
-This project requires the following dependencies:
-
-- **Programming Language:** PHP  
-- **Package Manager:** Composer  
-- **Container Runtime:** Docker  
-
----
-
-### ⚙️ Installation
-
-Build **TFG_environment** from the source and install dependencies:
-
-1. **Clone the repository:**
-```bash
-git clone https://github.com/albamayol/TFG_environment
 ```
-2. **Navigate to the project directory:**
-```bash
-cd TFG_environment
+NAME                                                    COMMAND           SERVICE             STATUS              PORTS
+-------------------------------------------------------------------------------------------------------------------------------
+${PROJECT_PREFIX}_${PROJECT_NAME}_app            "docker-php-entrypoi…"   app                 running             9000/tcp
+${PROJECT_PREFIX}_${PROJECT_NAME}_mysql          "docker-entrypoint.s…"   mysql               running             ${MYSQL_PORT}:3306/tcp
+${PROJECT_PREFIX}_${PROJECT_NAME}_nginx          "/docker-entrypoint.…"   nginx               running             ${NGINX_PORT}:8080/tcp
+${PROJECT_PREFIX}_${PROJECT_NAME}_phpmyadmin     "/docker-entrypoint.…"   phpmyadmin          running             ${PHPMYADMIN_PORT}:8081/tcp
 ```
-3. **Install the dependencies**
-    - Using Docker
-```bash
-        docker build -t albamayol/TFG_environment .
-```
-    - Using Composer
-```bash
-        composer install
-```  
+
+At this point, you should be able to access the application by visiting the following address in your browser [http://localhost:${NGINX_PORT}/](http://localhost:8080/).
+
+### Databases
+
+There are multiple ways to access the databases inside the docker container. In this case we are going to cover two options:
+
+1. Manually accessing the container
+2. Using your browser
+
+#### [MySQL] Manually
+
+In order to manually access the database, we need the name of the database container. Use `docker-compose ps`. The name should be something like `${PROJECT_PREFIX}_${PROJECT_NAME}_mysql`.
+
+Now, we are going to ssh into the container using the command `docker exec -it container_id bash`. At this point, you should be able to notice that the terminal prompt has changed because now you are inside of the container.
+
+To access the database, execute the command `mysql -u root -p`. (The username and password are specified in the .env file.)
+
+#### [MySQL] Browser
+
+To access to the admin page, visit the URL [http://localhost:${PHPMYADMIN_PORT}/](http://localhost:8081/) in your browser.
+
+### Shared files and directories
+
+1. In the root of the environment folder, you'll find a `.env` file with some useful information like the DB usernames and passwords used to create the environment by default (It should be initially modified with the information of your project).
+2. All the content of the website should be placed inside a shared directory called `./www`. The public content should be placed in `./www/public`.
+3. Inside the folder `./docker-compose` you'll find some interesting folders:
+   1. The `mysql` folder can be used to load a database when you run the `docker compose up -d` command. If you place a .sql file inside this folder, it'll be imported to the MySQL database automatically.
+   2. The `mysql/config` folder contains the configuration of the MySQL server (It shouldn't be modified unless you know what are you doing).
+   3. The `nginx` folder contains a file with the custom configuration of the Nginx server (It shouldn't be modified unless you know what are you doing).
+   4. The `xdebug` folder contains the configuration for the PHP's debugging system (It shouldn't be modified unless you know what are you doing).
+
+### Composer
+
+If you need to run composer to manage/install/update your project dependencies, open your terminal and execute the command `docker compose exec app composer {command}` where `{command}` is the action that you want to perform (for example install/update/...).
+
+### PHP Extensions
+
+Those PHP extensions are included in the environment:
+
+   - pdo_mysql
+   - mbstring
+   - exif
+   - pcntl
+   - bcmath
+   - gd
+   - zip
+   - intl
+   - mysqli
+   - xdebug
+   - wkhtmltopdf
