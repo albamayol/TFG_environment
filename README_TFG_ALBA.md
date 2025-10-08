@@ -1,3 +1,5 @@
+*Refer to README.md in this same directory for further and more detailed information*
+
 ## Instrucciones de interacción con la aplicación
 
 <h1 align="center">TFG_ENVIRONMENT</h1>
