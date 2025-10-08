@@ -1,13 +1,3 @@
-
-##Índice
-- Resumen
-- Primeros pasos
-    - Prerequisitos
-    - Instalación
-    - Uso
-    - Testing
-
-
 ## Instrucciones de interacción con la aplicación
 
 <h1 align="center">TFG_ENVIRONMENT</h1>
@@ -32,6 +22,8 @@
 ### 🛠️ Built with the tools and technologies:
 
 <p align="center">
+  <img src="https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white" />
+  <img src="https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white" />
   <img src="https://img.shields.io/badge/JSON-000000?style=flat&logo=json&logoColor=white" />
   <img src="https://img.shields.io/badge/Markdown-000000?style=flat&logo=markdown&logoColor=white" />
   <img src="https://img.shields.io/badge/Composer-885630?style=flat&logo=composer&logoColor=white" />
