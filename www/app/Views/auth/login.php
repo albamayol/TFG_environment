@@ -19,17 +19,19 @@
 
       <div class="field">
         <label for="email" class="label">Email</label>
-        <input
-          id="email"
-          class="input"
-          type="email"
-          name="email"
-          inputmode="email"
-          autocomplete="username"
-          required
-          autofocus
-          placeholder="yourmail@example.com"
-        >
+        <div class="email-row">
+          <input
+            id="email"
+            class="input"
+            type="email"
+            name="email"
+            inputmode="email"
+            autocomplete="username"
+            required
+            autofocus
+            placeholder="yourmail@example.com"
+          >
+        </div>
       </div>
 
       <div class="field">
