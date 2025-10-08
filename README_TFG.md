@@ -1,4 +1,7 @@
-*Refer to README.md in this same directory for further and more detailed information*
+<p align="center">
+    <em>Refer to README.md in this same directory for further and more detailed information</em>
+</p>  
+
 <p align="center">
   <em>📚 Need more details?</em><br>
   🔗 Visit the <a href="./README.md"><b>Extended Documentation</b></a> for advanced configuration, usage, and troubleshooting.
